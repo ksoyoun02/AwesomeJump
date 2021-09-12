@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="shop.awesomejump.mapper.OptionMapper">
+ 
+ 	<select id="selectOption" resultType="string" parameterType="shop.awesomejump.domain.ProductOptionDTO">
+		SELECT p.*, o.*
+		FROM product p, product_option o
+		WHERE p.product_no = #{p.product_no} ANd o.product_no = #{o.product_no}
+	</select>
+	
+	<insert id="insertOption" parameterType="shop.awesomejump.domain.ProductOptionDTO">
+		INSERT INTO product_option(product_option_no, product_no, product_option_color, product_option_size)
+		VALUES(product_option_seq.nextval, #{product_no}, #{product_option_color}, #{product_option_size})
+	</insert>
+	
+ </mapper>

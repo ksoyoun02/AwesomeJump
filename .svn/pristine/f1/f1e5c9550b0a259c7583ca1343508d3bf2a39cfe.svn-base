@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.CategoryProductMapper">
+
+<!-- 주영 / 카테고리 대분류 상품 출력 -->
+<select id="categoryAndProduct" resultType="shop.awesomejump.domain.ProductDTO" >
+	SELECT pd.product_no, pd.product_name, pd.product_price
+	     , NVL(rv.review_grade,0.0) review_grade, NVL(rv.review_cnt, 0) review_cnt
+	FROM product pd 
+		LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+              	   FROM review
+              	   GROUP BY product_no) rv
+		ON pd.product_no = rv.product_no
+</select>
+	
+<!-- 주영 / 카테고리 대분류 상품 출력 -->
+<select id="categoryMainProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+	SELECT product_no, product_name, product_grade, product_price
+	FROM product
+	WHERE category_main = #{category_main}
+</select>
+
+<!-- 주영 / 카테고리 중분류 상품 출력 -->
+<select id="categoryMidProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+	SELECT product_no, product_name, product_grade, product_price
+	FROM product
+	WHERE category_mid = #{category_mid} 
+</select>
+
+<!-- 주영 / 카테고리 소분류 상품 출력 -->
+<select id="categorySubProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+	SELECT product_no, product_name, product_grade, product_price
+	FROM product
+	WHERE category_sub = #{category_sub} 
+</select>
+
+ <!-- 주영 / 상품에 해당하는 이미지 출력 -->
+<select id="getMemCategoryImageList" resultType="shop.awesomejump.domain.ProImageDTO">
+  	SELECT *
+  	FROM pro_image
+</select>
+  
+<select id="searchProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="string">
+  	SELECT *
+	FROM product
+	WHERE product_name LIKE '%'||#{product_name}||'%'
+</select>
+  
+  
+
+
+</mapper>

@@ -1,0 +1,29 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import shop.awesomejump.domain.OrderDetailDTO;
+import shop.awesomejump.domain.OrderInfoDTO;
+import shop.awesomejump.mapper.OrderMapper;
+import shop.awesomejump.service.IOrderDAO;
+
+@Service
+@RequiredArgsConstructor
+public class OrderDAOImpl implements IOrderDAO {
+	
+	private final OrderMapper orderMapper;
+	
+	@Override
+	public List<OrderInfoDTO> selectOrderInfoList(int mem_no) {
+		return orderMapper.selectOrderInfoList(mem_no);
+	}
+
+	@Override
+	public List<OrderDetailDTO> selectOrderDetailList(String order_info_uid) {
+		return orderMapper.selectOrderDetailList(order_info_uid);
+	}
+	
+}

@@ -1,0 +1,31 @@
+$("#chatbot-request").on('keypress', (e) => {
+	if(e.which == 13) { sendChatbotRequest(); }
+});
+
+$("#chatbot-requestBtn").click(function() {
+	sendChatbotRequest();	
+});
+
+function sendChatbotRequest() {
+	var request = $("#chatbot-request").val();
+	$.ajax({
+		url: "/chatbot/agent",
+		type: "POST",
+		contentType: "text/plain", 
+		data: request,
+		dataType: "json",
+		beforeSend: (xhr) => {
+			xhr.setRequestHeader(CSRFheader, CSRFtoken);
+			var requestDiv = `<p class="from-me">${request}</p>`;
+			$(".imessage").append(requestDiv);
+			$("#chatbot-request").val("");
+		},
+		success: (data) => {
+			data.forEach((value) => {
+				var responseDiv = `<p class="from-them">${value}</p>`;
+				$(".imessage").append(responseDiv);
+			});
+		}
+	});
+}
+	

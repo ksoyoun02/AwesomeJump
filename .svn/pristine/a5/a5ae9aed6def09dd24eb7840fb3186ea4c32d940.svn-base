@@ -1,0 +1,71 @@
+package shop.awesomejump.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import shop.awesomejump.domain.CategoryDTO;
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.domain.ProductOptionDTO;
+import shop.awesomejump.service.ICategoryDAO;
+import shop.awesomejump.service.IOptionDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@Controller
+public class ProductController {
+
+	@Autowired
+	private IProductDAO product;
+	
+	@Autowired
+	private IOptionDAO option;
+	
+	@Autowired
+	private ICategoryDAO category; 
+
+	// 상품 등록 GET
+	@RequestMapping(value = "/insertProduct", method = RequestMethod.GET)
+	public String insertProduct(Model model) throws Exception {
+		System.out.println("insertProduct GET 호출");
+		
+		// 카테고리 전송
+		List<CategoryDTO> cDto = category.selectCategoryBig();
+		
+		System.out.println("insertProduct CategoryDTO ==> " + cDto);
+		
+		model.addAttribute("categoryList", cDto);
+		
+		return "/admin/insertProduct";
+	}
+
+	// 상품 등록 POST
+	@RequestMapping(value = "/insertProduct", method = RequestMethod.POST)
+	public String insertProduct(ProductDTO pDto, @RequestParam("product_option_color") String option_color, @RequestParam("product_option_size") String option_size ) throws Exception {
+		int result = 0;
+		result = product.insertProduct(pDto);
+		System.out.println("ProductDTO product_no ==> " + pDto.getProduct_no());
+		System.out.println("product_option_color ==> " + option_color);
+		System.out.println("product_option_size ==> " + option_size);
+		
+		ProductOptionDTO optionDto = new ProductOptionDTO();
+		optionDto.setProduct_no(pDto.getProduct_no());
+		optionDto.setProduct_option_color(option_color);
+		optionDto.setProduct_option_size(option_size);
+		
+		int optionSuccess = option.insertOption(optionDto);
+		
+		if (result > 0 && optionSuccess > 0) {
+			System.out.println("상품 등록 성공");
+		}
+		
+		return "redirect:/admin/blank";
+		
+	}
+	
+
+}

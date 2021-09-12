@@ -1,0 +1,9 @@
+package shop.awesomejump.service;
+
+import shop.awesomejump.domain.ProductOptionDTO;
+
+public interface IOptionDAO {
+
+	public int insertOption(ProductOptionDTO optionDto);
+	
+}

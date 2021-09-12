@@ -1,0 +1,24 @@
+package shop.awesomejump.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.ProductOptionDTO;
+import shop.awesomejump.mapper.OptionMapper;
+import shop.awesomejump.service.IOptionDAO;
+
+@Repository
+public class OptionDAOImpl implements IOptionDAO {
+
+	@Autowired
+	private OptionMapper optionMapper;
+
+	@Override
+	public int insertOption(ProductOptionDTO optionDto) {
+		System.out.println("insertOption optionDto ==> " + optionDto);
+		int result = optionMapper.insertOption(optionDto);
+		System.out.println("insertOption result ==> " + result);
+		return result;
+	}
+
+}

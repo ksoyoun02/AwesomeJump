@@ -1,0 +1,51 @@
+package shop.awesomejump.controller;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import shop.awesomejump.service.ICategoryDAO;
+import shop.awesomejump.service.ICategoryProductDAO;
+import shop.awesomejump.service.IMemDetailProductDAO;
+import shop.awesomejump.service.IOptionDAO;
+
+@Controller
+public class memDetailProductController {
+
+	@Autowired
+	private IMemDetailProductDAO pDao;
+	
+	@Autowired
+	private IOptionDAO oDao;
+	
+	 @Inject 
+	 private ICategoryDAO categoryDao;
+	 
+	 @Autowired 
+	 private ICategoryProductDAO categoryproductDao;
+	 
+
+	private static final Logger logger = LoggerFactory.getLogger(memDetailProductController.class);
+
+	// 주영 / 회원 상품 상세 정보 GET
+	/*
+	 * @RequestMapping(value = "/memDetailProduct", method = RequestMethod.GET)
+	 * public String memDetailProduct(Model model, @RequestParam("product_no") int
+	 * product_no) throws Exception { logger.info("detailProduct GET 호출");
+	 * 
+	 * ProductDTO pDto = pDao.memDetail(product_no);
+	 * 
+	 * 
+	 * model.addAttribute("detail", pDto);
+	 * 
+	 * return "/awesomejump/memDetailProduct";
+	 * 
+	 * }
+	 */
+	
+	 
+	
+}

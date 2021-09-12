@@ -1,0 +1,23 @@
+.register_logo img{
+	width: 100px;
+	margin: 0 7px;
+	float: left;
+}
+
+.register_logo {
+  width: fit-content;
+  text-align: center;
+  margin: auto;
+}
+
+.login_part_form h3 {
+	font-family: "NANUM";
+}
+	
+#login-submit{
+	height: 70px;
+    font-size: 30px;
+    font-family: 'NANUM';
+    font-weight: bold;
+    margin-top: 60px;
+}

@@ -1,0 +1,70 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import shop.awesomejump.domain.Paging;
+import shop.awesomejump.domain.QnaDTO;
+import shop.awesomejump.mapper.QnaMapper;
+import shop.awesomejump.service.IQnaDAO;
+
+@Service
+public class QnaDAOImpl implements IQnaDAO{
+
+	private static final Logger log = LoggerFactory.getLogger(QnaDAOImpl.class);
+	
+	@Autowired
+	private QnaMapper mapper;
+	
+	@Override
+	public int register(QnaDTO qDto) {
+		log.info("register..... " + qDto);
+		int result = 0;
+		result = mapper.insert(qDto);
+		
+		return result;
+	}
+
+	@Override
+	public QnaDTO get(int qna_no) {
+		
+		log.info("get....." + qna_no);
+		
+		return mapper.read(qna_no);
+	}
+
+	@Override
+	public boolean modify(QnaDTO qDto) {
+		
+		log.info("modify....." + qDto);
+		
+		return mapper.update(qDto) == 1;
+	}
+
+	@Override
+	public boolean remove(int qna_no) {
+		
+		log.info("remove....." + qna_no);
+		
+		return mapper.delete(qna_no) == 1;
+	}
+
+	@Override
+	public List<QnaDTO> getList(Paging page) {
+		
+		log.info("get list" + page);
+		
+		return mapper.listPaging(page);
+	}
+
+	@Override
+	public int getTotalCnt(Paging page) {
+		
+		return mapper.getTotalCount(page);
+	}
+
+}

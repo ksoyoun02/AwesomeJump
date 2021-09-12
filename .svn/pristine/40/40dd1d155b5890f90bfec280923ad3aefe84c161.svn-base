@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.CategoryProductMapper">
+
+<!-- 주영 / 카테고리 전체 상품 출력(회원) -->
+<select id="categoryAndProductWithInterest" resultType="shop.awesomejump.domain.ProductDTO" parameterType="map" >
+	SELECT pd.product_no
+			, pd.product_name
+			, pd.product_price
+	     	, NVL(rv.review_grade,0.0) review_grade
+	     	, NVL(rv.review_cnt, 0) review_cnt
+         	, NVL2(inter.pro_interest_no, 'y', 'n') "product_interest_yn"
+	FROM product pd
+            FULL JOIN pro_interest inter
+            ON pd.product_no = inter.product_no
+            	AND 
+            	<choose>
+            		<when test="mem_no != 0"> inter.mem_no = #{mem_no}</when>
+            		<otherwise> inter.mem_no IS NULL</otherwise>
+            	</choose>
+            LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+                       FROM review
+                       GROUP BY product_no) rv
+            ON pd.product_no = rv.product_no
+	WHERE
+		<if test="mem_no != 0">
+			inter.mem_no=#{mem_no} OR 
+		</if>
+		inter.mem_no IS NULL
+		<choose>
+			<when test="sort_option == 2">
+				ORDER BY review_cnt DESC
+			</when>
+			<when test="sort_option == 3">
+				ORDER BY pd.product_price DESC
+			</when>
+			<when test="sort_option == 4">
+				ORDER BY pd.product_price ASC
+			</when>
+			<when test="sort_option == 5">
+			<!-- FIXME 별점 순 0.0이 먼저 뜨고, 그 이후 별점순으로 나옴. -->
+				ORDER BY rv.review_grade DESC
+			</when>
+			<otherwise> ORDER BY rv.product_no DESC</otherwise>
+		</choose>
+</select>
+
+<!-- 주영 / 카테고리 대분류 상품 출력 -->
+<select id="categoryMainProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="map">
+	SELECT pd.product_no
+			, pd.product_name
+			, pd.product_price
+	     	, NVL(rv.review_grade,0.0) review_grade
+	     	, NVL(rv.review_cnt, 0) review_cnt
+         	, NVL2(inter.pro_interest_no, 'y', 'n') "product_interest_yn"
+	FROM product pd
+            FULL JOIN pro_interest inter
+            ON pd.product_no = inter.product_no
+            	AND 
+            	<choose>
+            		<when test="mem_no != 0"> inter.mem_no = #{mem_no}</when>
+            		<otherwise> inter.mem_no IS NULL</otherwise>
+            	</choose>
+            LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+                       FROM review
+                       GROUP BY product_no) rv
+            ON pd.product_no = rv.product_no
+	WHERE (
+		<if test="mem_no != 0">
+			inter.mem_no=#{mem_no} OR 
+		</if>
+		inter.mem_no IS NULL
+		)
+		AND pd.category_main = #{category_main}
+	<choose>
+		<when test="sort_option == 2">
+			ORDER BY review_cnt DESC
+		</when>
+		<when test="sort_option == 3">
+			ORDER BY pd.product_price ASC
+		</when>
+		<when test="sort_option == 4">
+			ORDER BY pd.product_price DESC
+		</when>
+		<when test="sort_option == 5">
+			ORDER BY rv.review_grade DESC
+		</when>
+		<otherwise> ORDER BY rv.product_no DESC</otherwise>
+	</choose>
+</select>
+
+<!-- 주영 / 카테고리 중분류 상품 출력 -->
+<select id="categoryMidProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="map">
+	SELECT pd.product_no
+			, pd.product_name
+			, pd.product_price
+	     	, NVL(rv.review_grade,0.0) review_grade
+	     	, NVL(rv.review_cnt, 0) review_cnt
+         	, NVL2(inter.pro_interest_no, 'y', 'n') "product_interest_yn"
+	FROM product pd
+            FULL JOIN pro_interest inter
+            ON pd.product_no = inter.product_no
+            	AND 
+            	<choose>
+            		<when test="mem_no != 0"> inter.mem_no = #{mem_no}</when>
+            		<otherwise> inter.mem_no IS NULL</otherwise>
+            	</choose>
+            LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+                       FROM review
+                       GROUP BY product_no) rv
+            ON pd.product_no = rv.product_no
+	WHERE (
+		<if test="mem_no != 0">
+			inter.mem_no=#{mem_no} OR 
+		</if>
+		inter.mem_no IS NULL
+		)
+		AND category_mid = #{category_mid} 
+	<choose>
+		<when test="sort_option == 2">
+			ORDER BY review_cnt DESC
+		</when>
+		<when test="sort_option == 3">
+			ORDER BY pd.product_price ASC
+		</when>
+		<when test="sort_option == 4">
+			ORDER BY pd.product_price DESC
+		</when>
+		<when test="sort_option == 5">
+			ORDER BY rv.review_grade DESC
+		</when>
+		<otherwise> ORDER BY rv.product_no DESC</otherwise>
+	</choose>
+</select>
+
+<!-- 주영 / 카테고리 소분류 상품 출력 -->
+<select id="categorySubProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="map">
+	SELECT pd.product_no
+			, pd.product_name
+			, pd.product_price
+	     	, NVL(rv.review_grade,0.0) review_grade
+	     	, NVL(rv.review_cnt, 0) review_cnt
+         	, NVL2(inter.pro_interest_no, 'y', 'n') "product_interest_yn"
+	FROM product pd
+            FULL JOIN pro_interest inter
+            ON pd.product_no = inter.product_no
+            	AND 
+            	<choose>
+            		<when test="mem_no != 0"> inter.mem_no = #{mem_no}</when>
+            		<otherwise> inter.mem_no IS NULL</otherwise>
+            	</choose>
+            LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+                       FROM review
+                       GROUP BY product_no) rv
+            ON pd.product_no = rv.product_no
+	WHERE (
+		<if test="mem_no != 0">
+			inter.mem_no=#{mem_no} OR 
+		</if>
+		inter.mem_no IS NULL
+		)
+		AND category_sub = #{category_sub} 
+	<choose>
+		<when test="sort_option == 2">
+			ORDER BY review_cnt DESC
+		</when>
+		<when test="sort_option == 3">
+			ORDER BY pd.product_price ASC
+		</when>
+		<when test="sort_option == 4">
+			ORDER BY pd.product_price DESC
+		</when>
+		<when test="sort_option == 5">
+			ORDER BY rv.review_grade DESC
+		</when>
+		<otherwise> ORDER BY rv.product_no DESC</otherwise>
+	</choose>
+</select>
+
+ <!-- 주영 / 상품에 해당하는 이미지 출력 -->
+<select id="getMemCategoryImageList" resultType="shop.awesomejump.domain.ProImageDTO">
+  	SELECT *
+  	FROM pro_image
+</select>
+  
+  <!-- 주영 / 상품 검색 -->
+<select id="searchProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="map">
+	SELECT pd.product_no
+			, pd.product_name
+			, pd.product_price
+	     	, NVL(rv.review_grade,0.0) review_grade
+	     	, NVL(rv.review_cnt, 0) review_cnt
+         	, NVL2(inter.pro_interest_no, 'y', 'n') "product_interest_yn"
+	FROM product pd
+            FULL JOIN pro_interest inter
+            ON pd.product_no = inter.product_no
+            	AND 
+            	<choose>
+            		<when test="mem_no != 0"> inter.mem_no = #{mem_no}</when>
+            		<otherwise> inter.mem_no IS NULL</otherwise>
+            	</choose>
+            LEFT JOIN (SELECT product_no, AVG(review_grade) review_grade, COUNT(*) review_cnt
+                       FROM review
+                       GROUP BY product_no) rv
+            ON pd.product_no = rv.product_no
+	WHERE (
+		<if test="mem_no != 0">
+			inter.mem_no=#{mem_no} OR 
+		</if>
+		inter.mem_no IS NULL
+		)
+		AND product_name LIKE '%'||#{keyword}||'%'
+	<choose>
+		<when test="sort_option == 2">
+			ORDER BY review_cnt DESC
+		</when>
+		<when test="sort_option == 3">
+			ORDER BY pd.product_price ASC
+		</when>
+		<when test="sort_option == 4">
+			ORDER BY pd.product_price DESC
+		</when>
+		<when test="sort_option == 5">
+			ORDER BY rv.review_grade DESC
+		</when>
+		<otherwise> ORDER BY rv.product_no DESC</otherwise>
+	</choose>
+</select>
+  
+  
+
+
+</mapper>

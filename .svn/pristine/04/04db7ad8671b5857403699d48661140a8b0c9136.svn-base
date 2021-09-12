@@ -1,0 +1,16 @@
+package shop.awesomejump.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import shop.awesomejump.domain.CategoryDTO;
+
+public interface CategoryMapper {
+	
+	public List<CategoryDTO> selectCategoryBig();
+	
+	public List<CategoryDTO> selectCategoryBigMiddle(String select);
+	
+	public List<CategoryDTO> selectCategoryBigMiddleSmall(Map<String, String> map);
+	
+}

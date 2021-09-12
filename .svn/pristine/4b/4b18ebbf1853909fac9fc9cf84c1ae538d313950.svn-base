@@ -1,0 +1,399 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <s:csrfMetaTags/>
+  
+  
+  <title>상품 수정</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="/resources/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template-->
+  <link href="/resources/admin/css/sb-admin-2.min.css" rel="stylesheet">
+  <%-- <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script> --%>
+  <script type="text/javascript" src="/resources/admin/vendor/jquery/jquery.min.js"></script>
+  <script defer src="/resources/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="/resources/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Custom scripts -->
+  <script defer src="/resources/admin/js/sb-admin-2.min.js"></script>
+
+	<style type="text/css">
+	
+	/* 상품 이미지 css */
+		#result_card img{
+		max-width: 100%;
+	    height: auto;
+	    display: block;
+	    padding: 5px;
+	    margin-top: 10px;
+	    margin: auto;	
+	}
+	#result_card {
+		position: relative;
+	}
+	.imgDeleteBtn{
+	    position: absolute;
+	    top: 0;
+	    right: 5%;
+	    background-color: #ef7d7d;
+	    color: wheat;
+	    font-weight: 900;
+	    width: 30px;
+	    height: 30px;
+	    border-radius: 50%;
+	    line-height: 26px;
+	    text-align: center;
+	    border: none;
+	    display: block;
+	    cursor: pointer;	
+	}
+	</style>
+	
+	<!-- 상품 이미지 수정 스크립트 -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			let product_no = '<c:out value="${modify.product_no}"/>';
+			let uploadResult = $("#uploadResult");
+			
+			$.getJSON("/admin/getImageList", {product_no : product_no}, function(arr) {
+				
+				if(arr.length === 0) {
+					
+					let str = "";
+					str += "<div id='result_card'>";
+					str += "<img src='/resources/admin/img/noImage.png'>";
+					str += "</div>";
+					
+					uploadResult.html(str);
+					
+					return;
+					
+				}
+				
+				let str = "";
+				let obj = arr;
+				
+				for(let i = 0; i < obj.length; i++){
+					
+					let fileCallPath = encodeURIComponent(obj[i].pro_image_path.replace(/\\/g, '/') + "/s_" + obj[i].pro_image_uuid + "_" + obj[i].pro_image_name);
+					str += "<div id='result_card'";
+					str += "data-path='" + obj[i].pro_image_path + "' data-uuid='" + obj[i].pro_image_uuid + "' data-filename='" + obj[i].pro_image_name + "'";
+					str += ">";
+					str += "<img src='/display?fileName=" + fileCallPath + "'>";
+					str += "<div class='imgDeleteBtn' data-file='" + fileCallPath + "'>x</div>";
+					str += "<input type='hidden' name='imageList["+ i +"].pro_image_name' value='" + obj[i].pro_image_name + "'>";
+					str += "<input type='hidden' name='imageList["+ i +"].pro_image_uuid' value='" + obj[i].pro_image_uuid + "'>";
+					str += "<input type='hidden' name='imageList["+ i +"].pro_image_path' value='" + obj[i].pro_image_path + "'>";
+					str += "<input type='hidden' name='imageList["+ i +"].pro_image_type' value='" + obj[i].pro_image_type + "'>";
+					str += "</div>";
+					
+					uploadResult.html(str);
+				}
+				
+			});
+			
+			// 이미지 삭제 버튼 클릭 시
+				$("#uploadResult").on("click", ".imgDeleteBtn", function(e){
+					
+					deleteFile();
+					
+				});
+			
+			// 파일 삭제 메서드
+				function deleteFile() {
+					
+					$("#result_card").remove();
+					
+				}
+			
+				var CSRFheader = $("meta[name='_csrf_header']").attr('content');
+				var CSRFtoken = $("meta[name='_csrf']").attr('content');
+		
+				// 이미지 업로드
+				$("input[type='file']").on("change", function(){
+					
+					// 이미지 존재 시 삭제
+					if($("#result_card").length > 0) {
+						deleteFile();
+					}
+					
+					let formData = new FormData();
+					let fileInput = $('input[name="uploadFile"]');
+					
+					let fileList = fileInput[0].files;
+					let fileObj = fileList[0];
+					
+					console.log("fileList : " + fileList);
+					console.log("fileObj : " + fileObj);
+					
+					console.log("fileName : " + fileObj.name);
+					console.log("fileSize : " + fileObj.size);
+					console.log("fileType : " + fileObj.type);
+					
+					if(!fileCheck(fileObj.name, fileObj.size)){
+						return false;
+					} 
+					
+					for(let i = 0; i < fileList.length; i++){
+						formData.append("uploadFile", fileList[i]);
+					}
+					
+					$.ajax({
+						url: '/admin/uploadProductImg',
+						processData: false,
+						contentType: false,
+						data: formData,
+						beforeSend: (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+						type: 'POST',
+						dataType: 'json',
+						success : function(result) {
+							console.log("ajax return result value : " + result);
+							showUploadImage(result);
+						},
+						error : function(result) {
+							alert("이미지 파일만 첨부 가능합니다.");
+						}
+					});
+					
+				});
+				
+				/* let regex = new RegExp("/\.(bmp|gif|jpg|jpeg|png)$/"); */
+				let regex = new RegExp("(.*?)\.(jpg|png)$");
+				let maxSize = 10 * 1024 * 1024;
+				
+				function fileCheck(fileName, fileSize) {
+					if(fileSize >= maxSize) {
+						alert("파일 사이즈 초과");
+						return false;
+					}
+					if(!regex.test(fileName)){
+						alert("해당 종류의 파일은 업로드할 수 없습니다.");
+						return false;
+					}
+					
+					return true;
+				}
+				
+				// 이미지 출력
+				function showUploadImage(uploadResultArr) {
+					
+					// 전달받은 데이터 검증
+					if(!uploadResultArr || uploadResultArr.length == 0) {return}
+					
+					let uploadResult = $("#uploadResult");
+					
+					/* let obj = uploadResultArr[0]; */
+					let obj = uploadResultArr;
+					
+					console.log("showUploadImage uploadResultArr : " + obj.pro_image_name);
+					
+					let str = "";
+					
+					/* for(let i = 0; i < obj.length; i++){
+						let fileCallPath = obj.uploadPath + "/thumb_" + obj.uuid + "_" + obj.fileName;
+ 					fileCallPath += obj[i].pro_image_path.replace(/\\/g, '/') + "/thumb_" + obj.uuid + "_" + obj.fileName;
+					} */
+					for(let i = 0; i < obj.length; i++){
+						
+						str = "";
+						
+  				let fileCallPath = encodeURIComponent(obj[i].pro_image_path.replace(/\\/g, '/') + "/s_" + obj[i].pro_image_uuid + "_" + obj[i].pro_image_name);
+						
+						str += "<div id='result_card'>";
+						str += "<img src='/display?fileName=" + fileCallPath +"'>";
+						console.log("fileCallPath : " + fileCallPath);
+						str += "<div class='imgDeleteBtn' data-file='" + fileCallPath + "'>x</div>";
+						str += "<input type='hidden' name='imageList["+ i +"].pro_image_name' value='" + obj[i].pro_image_name + "'>";
+						str += "<input type='hidden' name='imageList["+ i +"].pro_image_uuid' value='" + obj[i].pro_image_uuid + "'>";
+						str += "<input type='hidden' name='imageList["+ i +"].pro_image_path' value='" + obj[i].pro_image_path + "'>";
+						str += "<input type='hidden' name='imageList["+ i +"].pro_image_type' value='" + obj[i].pro_image_type + "'>";
+						str += "</div>";
+						
+					uploadResult.append(str);
+					}
+				}
+			});
+  	</script>
+  	
+  	<!-- 상품 옵션, 크기 수정 스크립트 -->
+ <%--  	<script type="text/javascript">
+  		window.onload = function check() {
+  			var jsonData = JSON.parse('${optionColor}');
+  			console.log(jsonData);
+  			var checkValues = "";
+  			var checkCount = $('input:checkbox[name="product_option_color"]').length;
+  			var str = "";
+  			for(var i = 0; i < jsonData.length; i++){
+  				for(var j = 0; j < checkCount; j++){
+	  				checkValues = $('input:checkbox[id="product_option_color' + j +'"]').val();
+  					if(checkValues == jsonData[i].product_option_color){
+  						console.log(jsonData[i].product_option_color + "일치");
+  						document.getElementById("product_option_color"+j).checked = true;
+  						break;
+  					}else {
+  						str += "<input type='text' name='product_option_color' value='" + jsonData[i].product_option_color + "'/>"
+  								+ "<button type='button' class='colorAdd'>추가</button><br>";
+  					}
+  				}
+  			}
+	  					$('#etcColor').append(str);
+  		}
+  	</script> --%>
+  	<script type="text/javascript">
+  		window.onload = function check() {
+  			var jsonData = JSON.parse('${optionColor}');
+  			var checkCount = $('input:checkbox[name="product_option_color"]').length;
+  			var str = "";
+  			console.log(jsonData);
+  			for(var i = 0; i < jsonData.length; i++){
+  				var color = jsonData[i].product_option_color;
+  				/* alert(color); */
+  				/* console.log("찾은 값 : " + document.getElementById(color).value); */
+  				
+  				if(document.getElementById(color) == null){
+  					str += "<input type='text' name='product_option_color' value='" + color + "'/>"
+						+ "<button type='button' class='colorAdd'>추가</button><br>";
+  				}
+  				else {
+  					document.getElementById(color).checked = true;
+  				}
+						//alert(document.getElementById(color).value);
+  			}
+		  			$('#etcColor').append(str);
+  				
+  			
+  			}
+  	</script>
+
+</head>
+
+<body id="page-top">
+
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <jsp:include page="/WEB-INF/templates/admin/sidebar.jsp"/>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+
+        <jsp:include page="/WEB-INF/templates/admin/topbar.jsp"/>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">상품등록</h1>
+      <form action="/admin/modifyProduct" method="post" role="from" autocomplete="off" id="form">
+  			<s:csrfInput/>
+  			
+  			<div class="form_section">
+  				<div class="form_section_title">
+  					<label>상품 이미지</label>
+  				</div>
+  				<div class="form_section_content">
+  					<input type="file" id="fileItem" name="uploadFile" style="height: 30px;" multiple="multiple"/>
+  					<div id="uploadResult">
+  					
+  					</div>
+  				</div>
+  			</div>
+  			
+  			<div class="inputArea">
+  				<label>상품명</label>
+  				<input type="text" id="product_name" name="product_name" value="${modify.product_name }"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품가격</label>
+  				<input type="text" id="product_price" name="product_price" value="${modify.product_price }"/>원
+  			</div>
+  			<div class="inputArea">
+  				<label>상품설명</label>
+  				<input type="text" id="product_content" name="product_content" value="${modify.product_content }"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품재고</label>
+  				<input type="text" id="product_stock" name="product_stock" value="${modify.product_stock }"/>개
+  			</div>
+  			<div class="inputArea">
+  				<label>상품재질</label>
+  				<input type="text" id="product_texture" name="product_texture" value="${modify.product_texture }"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품색상</label>
+				</div>
+  			<div class="colorDiv">
+  				<input type="checkbox" name="product_option_color" id="빨강색" value="빨강색"/>빨강색
+					<input type="checkbox" name="product_option_color" id="노랑색" value="노랑색"/>노랑색
+					<input type="checkbox" name="product_option_color" id="분홍색" value="분홍색"/>분홍색
+					<input type="checkbox" name="product_option_color" id="오렌지색" value="오렌지색"/>오렌지색
+					<input type="checkbox" name="product_option_color" id="초록색" value="초록색"/>초록색
+					<input type="checkbox" name="product_option_color" id="파랑색" value="파랑색"/>파랑색
+					<input type="checkbox" name="product_option_color" id="갈색" value="갈색"/>갈색
+					<input type="checkbox" name="product_option_color" id="흰색" value="흰색"/>흰색
+					<input type="checkbox" name="product_option_color" id="보라색" value="보라색"/>보라색
+					<input type="checkbox" name="product_option_color" id="회색" value="회색"/>회색
+					<input type="checkbox" name="product_option_color" id="검정" value="검정"/>검정
+					<!-- <input type="text" name="product_option_color" placeholder="기타 색상" id="product_option_color11" value="기타색상"><button type="button" class="colorAdd">+</button> -->
+					<div id="etcColor">
+					
+					</div>
+				</div>
+  			<c:forEach items="${modifyOption }" var="option">
+					<br>
+					<div class="colorAddInput">
+	  				<%-- <input type="checkbox" id="product_option_color" name="product_option_color" value=""/>${option.product_option_color } --%>
+	  				&nbsp;||&nbsp;
+	  				<label>상품크기</label>
+	  				<input type="text" id="product_option_size" name="product_option_size" value="${option.product_option_size }"/>
+	  			</div>
+  			</c:forEach>
+  			<div class="inputArea">
+  				<label>포인트</label>
+  				<input type="text" id="product_point" name="product_point" value="${modify.product_point }"/>원
+  			</div>
+  			
+  			<input type="hidden" name="product_no" id="product_no" value="${modify.product_no }">
+  			<input type="hidden" name="category_main" id="category_main" value="${modify.category_main }">
+  			<input type="hidden" name="category_mid" id="category_mid" value="${modify.category_mid }">
+  			<input type="hidden" name="category_sub" id="category_sub" value="${modify.category_sub }">
+		  	<br>
+	  		<button type="submit">확인</button>
+	  		<button type="reset" onclick="history.go(-1);">취소</button>
+	   	</form>
+	  		<button onclick="location.href='/admin/blank'">관리자화면으로</button>
+	   	
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+
+
+      <jsp:include page="/WEB-INF/templates/admin/footer.jsp"/>
+
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top"> 
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <jsp:include page="/WEB-INF/templates/admin/logoutModal.jsp"/>
+</body>
+</html>

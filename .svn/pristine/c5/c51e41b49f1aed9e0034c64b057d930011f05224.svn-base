@@ -1,0 +1,5 @@
+package shop.awesomejump.mapper;
+
+public interface OrderMapper {
+
+}

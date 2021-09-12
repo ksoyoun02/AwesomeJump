@@ -1,0 +1,263 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <s:csrfMetaTags/>
+  
+  
+  <title>상품 등록</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="/resources/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template-->
+  <link href="/resources/admin/css/sb-admin-2.min.css" rel="stylesheet">
+  <%-- <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script> --%>
+  <script type="text/javascript" src="/resources/admin/vendor/jquery/jquery.min.js"></script>
+  <script defer src="/resources/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="/resources/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Custom scripts -->
+  <script defer src="/resources/admin/js/sb-admin-2.min.js"></script>
+
+</head>
+
+<body id="page-top">
+
+	<script type="text/javascript">
+	
+		var jsonData = JSON.parse('${category}');
+		console.log(jsonData);
+		console.log(jsonData.length);
+		
+		var cate1Arr = new Array();
+		var cate1Obj = new Object();
+		
+	$(document).ready(function() {
+		// 컨트롤러에서 데이터 받기
+		
+		// 1차 분류 셀렉트 박스에 삽입할 데이터 준비
+		for(var i = 0; i < jsonData.length; i++) {
+		 
+		 if(jsonData[i].level == "1") {
+			cate1Obj = new Object();  //초기화
+		  cate1Obj.cateCode = jsonData[i].cateCode;
+			cate1Obj.cateName = jsonData[i].cateName;
+		  cate1Arr.push(cate1Obj);
+		 }
+		}
+		
+		// 1차 분류 셀렉트 박스에 데이터 삽입
+		var category = "";
+		
+		for(var i = 0; i < cate1Arr.length; i++) {
+		      category += "<option value='" + cate1Arr[i].cateCode + "'>"
+		      + cate1Arr[i].cateName + "</option>";
+		}
+		$("#category1").append(category);
+			
+	});
+	
+	$(document).on("change", "select.category1", function() {
+		
+		var cate2Arr = new Array();
+		var cate2Obj = new Object();
+		
+		// 2차 분류 셀렉트 박스에 삽입할 데이터 준비
+		for(var i = 0; i < jsonData.length; i++) {
+			 if(jsonData[i].level == "2") {
+				cate2Obj = new Object();  //초기화
+			  cate2Obj.cateCode = jsonData[i].cateCode;
+				cate2Obj.cateName = jsonData[i].cateName;
+				cate2Obj.cateCodeRef = jsonData[i].cateCodeRef;
+			  cate2Arr.push(cate2Obj);
+			}
+		}
+		
+		var cate2Select = $("select.category2");
+		
+		cate2Select.children().remove();
+		
+		$("option:selected", this).each(function() {
+			
+			var selectVal = $(this).val();
+			cate2Select.append("<option value='" + selectVal + "'>전체</option>");
+			
+			for(var i = 0; i < cate2Arr.length; i++){
+				if(selectVal == cate2Arr[i].cateCodeRef){
+					cate2Select.append("<option value='" + cate2Arr[i].cateCode + "'>"
+				      + cate2Arr[i].cateName + "</option>");
+				}
+			}
+		});
+		
+	});
+	
+	$(document).on("change", "select.category2", function() {
+		
+		var cate3Arr = new Array();
+		var cate3Obj = new Object();
+		// 3차 분류 셀렉트 박스에 삽입할 데이터 준비
+		for(var i = 0; i < jsonData.length; i++) {
+			 if(jsonData[i].level == "3") {
+				cate3Obj = new Object();  //초기화
+			  cate3Obj.cateCode = jsonData[i].cateCode;
+				cate3Obj.cateName = jsonData[i].cateName;
+				cate3Obj.cateCodeRef = jsonData[i].cateCodeRef;
+			  cate3Arr.push(cate3Obj);
+			}
+		}
+		
+		/*  for(var i = 0; i < cate3Arr.length; i++) {
+			   cate3Select.append("<option value='" + cate3Arr[i].cateCode + "'>"
+			        + cate3Arr[i].cateName + "</option>");
+		}  */
+		
+		var cate3Select = $("select.category3");
+			
+		
+			cate3Select.children().remove();
+			
+			$("option:selected", this).each(function() {
+				
+		var selectVal = $(this).val();
+				cate3Select.append("<option value='" + selectVal + "'>전체</option>");
+		
+		for(var i = 0; i < cate3Arr.length; i++){
+			if(selectVal == cate3Arr[i].cateCodeRef){
+				cate3Select.append("<option value='" + cate3Arr[i].cateCode + "'>"
+			      + cate3Arr[i].cateName + "</option>");
+			}
+		}
+	});
+		 
+	});
+	
+</script>
+<%-- <script type="text/javascript">
+var CSRFheader = $("meta[name='_csrf_header']").attr('content');
+var CSRFtoken = $("meta[name='_csrf']").attr('content');
+	function formSubmit() {
+		var category_main = $("#category1 option:checked").text();
+		var category_mid = $("#category2 option:checked").text();
+	
+		var formData = $("form").serialize();
+		
+		var allData = {formData, "category_main" : category_main, "category_mid" : category_mid};
+		$.ajax({
+			type: 'POST',
+			url: "/admin/insertProduct",
+			contentType: 'text/plain',
+			data: allData,
+			beforeSend:(xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+			success : function(data){
+				if(data > 0){
+					alert("등록 완료");
+					location.href="/admin/blank";
+				} else {
+					alert("등록 실패");
+					history.go(-1);
+				}
+			}
+		});
+	}
+</script> --%>
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <jsp:include page="/WEB-INF/templates/admin/sidebar.jsp"/>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+
+        <jsp:include page="/WEB-INF/templates/admin/topbar.jsp"/>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">상품등록</h1>
+      <form action="/admin/insertProduct" method="post" role="from" autocomplete="off" id="form">
+  			<s:csrfInput/>
+  			<div class="inputArea">
+  				<label>상품명</label>
+  				<input type="text" id="product_name" name="product_name"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품가격</label>
+  				<input type="text" id="product_price" name="product_price"/>원
+  			</div>
+  			<div class="inputArea">
+  				<label>상품설명</label>
+  				<textarea rows="5" cols="50" id="product_content" name="product_content"></textarea>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품재고</label>
+  				<input type="text" id="product_stock" name="product_stock"/>개
+  			</div>
+  			<div class="inputArea">
+  				<label>상품재질</label>
+  				<input type="text" id="product_texture" name="product_texture"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품색상</label>
+  				<input type="text" id="product_option_color" name="product_option_color"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>상품크기</label>
+  				<input type="text" id="product_option_size" name="product_option_size"/>
+  			</div>
+  			<div class="inputArea">
+  				<label>포인트</label>
+  				<input type="text" id="product_point" name="product_point"/>원
+  			</div>
+  			
+  			
+  			
+	  		<label>1차 분류</label>
+	  		<select class="category1" id="category1" name="category_main">
+	  			<option value="">전체</option>
+	  		</select>
+	  		<label>2차 분류</label>
+	  		<select class="category2" id="category2" name="category_mid">
+	  			<option value="">전체</option>
+	  		</select>
+	  		<label>3차 분류</label>
+	  		<select class="category3" id="category3" name="category_sub">
+	  			<option value="">전체</option>
+	  		</select>
+		  	<br>
+	  		<button type="submit">등록</button>
+	  		<button type="reset">취소</button>
+	  		<button onclick="location.href='/admin/blank'">관리자화면으로</button>
+	   	</form>
+	   	
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+
+
+      <jsp:include page="/WEB-INF/templates/admin/footer.jsp"/>
+
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top"> 
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <jsp:include page="/WEB-INF/templates/admin/logoutModal.jsp"/>
+</body>
+</html>

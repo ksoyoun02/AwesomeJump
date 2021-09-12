@@ -1,0 +1,189 @@
+package shop.awesomejump.controller;
+
+import java.util.Random;
+
+import javax.mail.internet.MimeMessage;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import shop.awesomejump.config.ProfileResolver;
+import shop.awesomejump.config.RootConfig;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.service.IMemberDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles(resolver = ProfileResolver.class)
+@ContextConfiguration(classes = { RootConfig.class })
+public class MemberControllerTest {
+	
+//	@Autowired 
+//	private IMemberDAO memberDao;
+//	
+//	@Autowired
+//	private PasswordEncoder pwdEncoder;
+//	
+//	@Autowired
+//	private JavaMailSender mailSender;
+//	
+//	@Autowired
+//	private IProductDAO productService;
+
+//	@Test
+//	//회원가입 테스트
+//	public void joinTest() {
+//		MemberDTO mDto = new MemberDTO();
+//		
+//		// 회원가입 정보
+//		mDto.setMem_email("joinTest@email.com");
+//		mDto.setMem_nickname("joinTest");
+//		mDto.setMem_pw(pwdEncoder.encode("testPW"));
+//		mDto.setMem_email_yn("N");
+//		mDto.setMem_register_path("DEFAULT");
+//		
+//		int result = 0;
+//		result = memberDao.insertMember(mDto);
+//		
+//		// 회원가입 성공시
+//		if(result > 0) {
+//			
+//			// 회원가입 쿠폰 발급
+//			MemberDTO couponDto = new MemberDTO();
+//			couponDto = memberDao.getMemberByEmail(mDto.getMem_email());
+//			memberDao.registerCoupon(couponDto);
+//			
+//			Random rnd = new Random();
+//			
+//			// 인증코드 생성
+//			int code = rnd.nextInt(99999)+10000;
+//			
+//			String setfrom = "ksoyoun95@naver.com";
+//			//String tomail = mDto.getMem_email(); // 받는 사람 이메일
+//			String tomail = "ksoyoun95@naver.com"; // 테스트 위해 유효 이메일 전송
+//			String title = "awesomejump 회원가입 인증 이메일 입니다"; // 제목
+//			
+//			try {
+//				MimeMessage message = mailSender.createMimeMessage();
+//				MimeMessageHelper messageHelper = new MimeMessageHelper(message,
+//						true, "UTF-8");
+//
+//				messageHelper.setFrom(setfrom); // 보내는사람 생략하면 정상작동을 안함
+//				messageHelper.setTo(tomail); // 받는사람 이메일
+//				messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
+//				messageHelper.setText(
+//						"<html>"
+//						+ "<body>"
+//						+ "<img src='https://ifh.cc/g/FZqwaM.png'>"
+//						+ "<h1>awesomeJump 회원가입 인증 메일 입니다.</h1>"
+//						+ "<h3>아래 링크클릭시 회원인증이 완료됩니다</h3>"
+//						+ "<a href='http://localhost:9090/emailAuth?userEmail="
+//						+ mDto.getMem_email()
+//						+ "&emailCode="
+//						+ code
+//						+ "' style='font-size:20px;'>이메일인증</a>"
+//						+ "</body>"
+//						+ "</html>"
+//						,true); // 메일 내용
+//
+//				mailSender.send(message);
+//				
+//				mDto.setMem_email_yn(String.valueOf(code));
+//				memberDao.updateCode(mDto);
+//				
+//			} catch (Exception e) {
+//				System.out.println(e);
+//			}
+//		}
+//	}
+
+//	@Test
+//	public void email() {
+//		
+//	
+//		String setfrom = "ksoyoun95@naver.com";
+//		String tomail = "ksoyoun95@naver.com"; // 테스트 위해 유효 이메일 전송
+//		String title = "awesomejump 회원가입 인증 이메일 입니다"; // 제목
+//		
+//		try {
+//			MimeMessage message = mailSender.createMimeMessage();
+//			MimeMessageHelper messageHelper = new MimeMessageHelper(message,
+//					true, "UTF-8");
+//
+//			messageHelper.setFrom(setfrom); // 보내는사람 생략하면 정상작동을 안함
+//			messageHelper.setTo(tomail); // 받는사람 이메일
+//			messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
+//			messageHelper.setText(
+//					"<html>"
+//					+ "<body><div style='text-align: center;'>"
+//					+ "<img src='https://ifh.cc/g/FZqwaM.png'>"
+//					+ "<h1>awesomeJump 회원가입 인증 메일 입니다.</h1>"
+//					+ "<h3>아래 링크클릭시 회원인증이 완료됩니다</h3>"
+//					+ "<span><a href='http://localhost:9090/emailAuth?userEmail="
+//					+ "&emailCode="
+//					+ "' style='font-size:20px;'>이메일인증</a></span>"
+//					+ "</div></body>"
+//					+ "</html>"
+//					,true); // 메일 내용
+//
+//			mailSender.send(message);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//	}
+	
+//	@Test
+//	// 인증이메일 체크
+//	public void emailAuth() throws Exception {
+//		MemberDTO mDto = new MemberDTO();
+//		
+//		mDto = memberDao.selectMember("ksoyoun95@naver.com");
+//		//System.out.println(mDto);
+//		String code = "12345";
+//		
+//		if(mDto.getMem_email_yn().equals(code)) {
+//			System.out.println("인증코드가 일치");
+//			mDto.setMem_email_yn("Y");
+//			memberDao.updateCode(mDto);
+//		}else if(mDto.getMem_email_yn().equals("Y")){
+//			System.out.println("이미 인증한 이메일");
+//		}else {
+//			System.out.println("인증코드 불일치");
+//	}
+//
+//}
+//	@Test
+//	public void email_check() throws Exception {
+//		String email = "ksoyoun95@naver.com";
+//		
+//		int result = memberDao.confirmEmail(email);
+//		
+//		if(result > 0) {
+//			System.out.println("이메일중복");
+//		}else {
+//			System.out.println("이메일중복안됨");
+//		}
+//	}
+//	
+//	@Test
+//	public void nickName_check() throws Exception {
+//		String nick = "테스트아이디1";
+//		
+//		int result = memberDao.confirmNickname(nick);
+//		
+//		if(result > 0) {
+//			System.out.println("닉네임중복");
+//		}else {
+//			System.out.println("닉네임중복안됨");
+//		}
+//	}
+	
+	
+}

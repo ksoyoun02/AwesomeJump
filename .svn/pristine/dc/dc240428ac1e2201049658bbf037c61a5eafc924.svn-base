@@ -1,0 +1,29 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.mapper.MemProductMapper;
+import shop.awesomejump.service.IMemDetailProductDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@Repository
+public class memDetailProductDAOImpl implements IMemDetailProductDAO {
+
+	@Autowired
+	private MemProductMapper memproductmapper;
+	
+
+
+	// 주영 / 회원 상품 상세 정보
+	@Override
+	public ProductDTO memDetail(int product_no) throws Exception {
+		return memproductmapper.memDetail(product_no);
+	}
+	
+
+	
+}

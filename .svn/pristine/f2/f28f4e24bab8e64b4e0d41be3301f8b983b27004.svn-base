@@ -1,0 +1,98 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!doctype html>
+<html lang="ko">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>AwesomeJump - orders</title>
+
+<link rel="stylesheet" href="/resources/awesomejump/css/bootstrap.min.css">
+<link rel="stylesheet" href="/resources/awesomejump/css/animate.css">
+<link rel="stylesheet" href="/resources/awesomejump/css/owl.carousel.min.css">
+<link rel="stylesheet" href="/resources/awesomejump/css/magnific-popup.css">
+<link rel="stylesheet" href="/resources/awesomejump/css/slick.css">
+<!-- style CSS -->
+<link rel="stylesheet" href="/resources/awesomejump/css/style.css">
+<link rel="stylesheet" href="/resources/awesomejump/css/custom/orders.css">
+
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script defer src="/resources/awesomejump/js/popper.min.js"></script>
+<script defer src="/resources/awesomejump/js/bootstrap.min.js"></script>
+<script defer src="/resources/awesomejump/js/jquery.magnific-popup.js"></script>
+<script defer src="/resources/awesomejump/js/owl.carousel.min.js"></script>
+<script defer src="/resources/awesomejump/js/jquery.counterup.min.js"></script>
+<script defer src="/resources/awesomejump/js/jquery.nice-select.min.js"></script>
+<script defer src="/resources/awesomejump/js/slick.min.js"></script>
+<script defer src="/resources/awesomejump/js/jquery.ajaxchimp.min.js"></script>
+<!-- custom js -->
+<script defer src="/resources/awesomejump/js/custom.js"></script>
+<script defer src="/resources/awesomejump/js/custom/orders.js"></script>
+
+<!-- Swiper -->
+<link rel="stylesheet" href="/resources/awesomejump/css/swiper.min.css">
+<script src="/resources/awesomejump/js/swiper.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <jsp:include page="/WEB-INF/templates/awesomejump/header.jsp" />
+  <!-- 회원 정보 페이지 메뉴바(MembersNavbar) -->
+  <jsp:include page="/WEB-INF/templates/awesomejump/membersNavbar.jsp" />
+
+  <section class="orderInfo">
+    <div class="container-fluid">
+      <div class="offset-xl-2 col-xl-8">
+        <div class="accordion mt-5" id="orderInfoaccordion">
+          <c:forEach var="orderInfo" items="${orderInfoList}" varStatus="status">
+            <div class="card">
+              <div class="card-header d-none d-md-block" id="headingOne">
+                <div class="d-flex p-3 orderInfo" 
+                     data-toggle="collapse" data-target="#collapse${status.index}" 
+                     aria-expanded="true" aria-controls="collapse${status.index}">
+                    <div class="mr-5"><fmt:formatDate value="${orderInfo.order_info_date}" pattern="yy-MM-dd"/></div>
+                    <div class="ml-5">${orderInfo.order_info_name}</div>
+                    <div class="ml-auto"><fmt:formatNumber value="${orderInfo.order_info_price}" type="currency"/></div>
+                </div>
+              </div>
+              <div class="d-block d-md-none p-1 lead">
+                <fmt:formatDate value="${orderInfo.order_info_date}" pattern="yy-MM-dd"/>
+              </div>
+              <div class="border-bottom d-none d-md-block" style="position: relative; top: 2px;"></div>
+              <div id="collapse${status.index}" class="collapse" aria-labelledby="headingOne" data-parent="#orderInfoaccordion">
+                <c:forEach var="orderDetail" items="${orderInfo.orderDetailList}">
+                  <div class="d-flex p-3 orderDetailInfo">
+                    <div class="detailDiv1">
+                      <c:if test="${orderDetail.imagePath != ''}">
+                        <img class="rounded" src="/upload${orderDetail.imagePath}">
+                      </c:if>
+                    </div>
+                    <div class="detailDiv2">${orderDetail.product_name}</div>
+                    <div class="detailDiv3">${orderDetail.order_detail_quantity}개</div>
+                    <div class="detailDiv4"><fmt:formatNumber value="${orderDetail.product_price}" type="currency"/></div>
+                    <div class="detailDiv5">${orderDetail.order_detail_shipping}</div>
+                    <div class="detailDiv6">
+                      <button class="btn writeReviewBtn border" data-toggle="tooltip" 
+                              data-placement="top" title="배송이 완료되면 리뷰를 작성하실 수 있어요">
+                        후기 작성
+                      </button>
+                    </div>
+                  </div>
+                </c:forEach>
+              </div>
+            </div>
+          </c:forEach>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <jsp:include page="/WEB-INF/templates/awesomejump/footer.jsp" />
+
+</body>
+</html>

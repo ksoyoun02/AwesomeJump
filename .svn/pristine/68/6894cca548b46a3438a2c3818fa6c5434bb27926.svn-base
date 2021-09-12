@@ -1,0 +1,29 @@
+package shop.awesomejump.mapper;
+
+import java.util.List;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface CategoryProductMapper {
+
+	
+	// 주영 / 상품 전체 출력
+	public List<ProductDTO> categoryAndProduct() throws Exception;
+	
+	// 주영 / 대분류에 해당하는 상품 전체 출력
+	public List<ProductDTO> categoryMainProduct(int category_main) throws Exception;
+
+	// 주영 / 중분류에 해당하는 상품 전체 출력
+	public List<ProductDTO> categoryMidProduct(int category_mid) throws Exception;
+
+	// 주영 / 소분류에 해당하는 상품 전체 출력
+	public List<ProductDTO> categorySubProduct(int category_sub) throws Exception;
+	
+	// 주영 / 소분류에 해당하는 상품 전체 출력
+	public List<ProductDTO> getMemCategoryImageList() throws Exception;
+	
+	
+	
+	
+
+}

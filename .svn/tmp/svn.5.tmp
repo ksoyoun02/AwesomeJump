@@ -1,0 +1,72 @@
+package shop.awesomejump.controller;
+
+
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.ListCartDTO;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.domain.TotalCartDTO;
+import shop.awesomejump.service.ICartDAO;
+
+
+@Controller
+@RequestMapping("/cart")
+public class CartController {
+	
+	@Autowired
+	private ICartDAO cartDao;
+	
+	private Logger log = LoggerFactory.getLogger(CartController.class);
+	//장바구니 추가
+	@RequestMapping(value = "/insertCart", method=RequestMethod.GET)
+	public String insertCart(CartDTO cDto, @AuthenticationPrincipal MemberDTO member)throws Exception{
+		
+		log.info("mem_no : " + member);
+		
+		cartDao.insertCart(cDto);
+		
+		return "/cart/list";
+	}
+	//장바구니 목록
+	@RequestMapping("/list")
+	public String listCart(Model model, @AuthenticationPrincipal MemberDTO member){
+		
+		//회원 장바구니 목록 가져오기
+		log.info("회원 member : " + member.getMem_no());
+		List<ListCartDTO> list = cartDao.listCart(member.getMem_no());
+		
+		log.info("list : " + list);
+		// 장바구니 총액, 총 포인트 구하기
+		TotalCartDTO cDto = cartDao.totalCart(member.getMem_no());
+		
+		model.addAttribute("listCart", list);
+		log.info("listCart : " + list);
+		
+		if (cDto != null) {
+			
+			model.addAttribute("totalPrice",cDto.getTotalPrice());
+			model.addAttribute("totalPoint", cDto.getTotalPoint());
+		}
+		
+		
+		return "/cart/list";
+	}
+	//장바구니 비우기
+	@RequestMapping("/deleteAll")
+	public String deleteAll(@AuthenticationPrincipal MemberDTO member) {
+		cartDao.deleteAllCart(member.getMem_no());
+		return "redirect:/cart/list";
+	}
+
+}

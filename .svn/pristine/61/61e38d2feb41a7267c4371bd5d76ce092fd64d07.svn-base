@@ -1,0 +1,104 @@
+package shop.awesomejump.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import net.sf.json.JSONArray;
+import shop.awesomejump.domain.CategoryDTO;
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.domain.ProductOptionDTO;
+import shop.awesomejump.service.ICategoryDAO;
+import shop.awesomejump.service.IOptionDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@RequestMapping("/admin")
+@Controller
+public class ProductController {
+
+	@Inject
+	private ICategoryDAO cateDao;
+	
+	@Autowired
+	private IProductDAO pDao;
+
+	@Autowired
+	private IOptionDAO oDao;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+	
+	// 상품 등록 GET
+	@RequestMapping(value = "/insertProduct", method = RequestMethod.GET)
+	public String insertProduct(Model model) throws Exception {
+		System.out.println("insertProduct GET 호출");
+		
+		List<CategoryDTO> category = cateDao.category();
+		
+		System.out.println("insertProduct CategoryDTO ==> " + category);
+		
+		model.addAttribute("category", JSONArray.fromObject(category));
+		
+		System.out.println("insertProduct JSONArray ==> " + JSONArray.fromObject(category));
+		
+		return "/admin/insertProduct";
+	}
+	
+	// 상품 등록 POST
+	@RequestMapping(value = "/insertProduct", method=RequestMethod.POST)
+	public String insertProduct(ProductDTO pDto, @RequestParam("product_option_color") String option_color, @RequestParam("product_option_size") String option_size,
+							@RequestParam("category_main") String category_main, @RequestParam("category_mid") String category_mid, @RequestParam("category_sub") String category_sub) throws Exception {
+		
+		pDto.setCategory_main(category_main);
+		pDto.setCategory_mid(category_mid);
+		pDto.setCategory_sub(category_sub);
+		
+		System.out.println("insertProduct category_main ==> " + category_main);
+		System.out.println("insertProduct category_mid ==> " + category_mid);
+		System.out.println("insertProduct category_sub ==> " + category_sub);
+		
+		pDao.insertProduct(pDto);
+		
+		logger.info("insertProduct POST ProductDTO ==> " + pDto);
+		
+		ProductOptionDTO optionDto = new ProductOptionDTO();
+		optionDto.setProduct_no(pDto.getProduct_no());
+		optionDto.setProduct_option_color(option_color);
+		optionDto.setProduct_option_size(option_size);
+		
+		oDao.insertOption(optionDto);
+		
+		return "/admin/blank";
+	}
+
+	// 상품 목록, 상품 옵션
+	@RequestMapping(value="/listProduct", method=RequestMethod.GET)
+	public void listProduct(Model model) throws Exception {
+		logger.info("listProduct GET 호출");
+		
+		List<ProductDTO> list = pDao.listProduct();
+		List<ProductOptionDTO> option = oDao.listOption();
+		
+		logger.info("listProduct option ==> " + option);
+		
+		model.addAttribute("list", list);
+		model.addAttribute("option", option);
+	}
+	
+	// 상품 상세 정보
+	@RequestMapping(value="detailProduct", method=RequestMethod.GET)
+	public void detailProduct(Model model, @RequestParam("product_no") String product_no) throws Exception {
+		logger.info("detailProduct GET 호출");
+		
+		ProductDTO pDto = pDao.detailProduct();
+	}
+
+}

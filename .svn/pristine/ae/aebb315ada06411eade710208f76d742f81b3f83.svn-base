@@ -1,0 +1,51 @@
+$("#chatbot-request").on('keypress', (e) => {
+	if(e.which == 13) { sendChatbotRequest(); }
+});
+
+$("#chatbot-requestBtn").click(function() {
+	sendChatbotRequest();	
+});
+
+function sendChatbotRequest() {
+	var request = $("#chatbot-request").val();
+	if ($.trim(request) == "") return false;
+	$.ajax({
+		url: "/chatbot/agent",
+		type: "POST",
+		contentType: "text/plain", 
+		data: request,
+		dataType: "json",
+		beforeSend: (xhr) => {
+			xhr.setRequestHeader(CSRFheader, CSRFtoken);
+			var requestDiv = `<p class="from-me">${request}</p>`;
+			$(".imessage").append(requestDiv)
+				.scrollTop($(document).height());
+			$("#chatbot-request").val("");
+		},
+		success: (data) => {
+			data.forEach((value) => {
+				var responseDiv = `<p class="from-them">${value}</p>`;
+				$(".imessage").append(responseDiv)
+					.scrollTop($(document).height());
+			});
+		}
+	});
+}
+
+var currentPosition = parseInt($(".bubble").css("top"));
+$(window).scroll(function() {
+	var position = $(window).scrollTop();
+	$(".bubble").stop().animate({
+		"top": position + currentPosition + "px"
+	}, 750);
+});
+
+$(".bubble").click(function() {
+	$(".chatbotWrapper").show();
+	$(".bubble").hide();
+});
+
+$(".chatbotCloseBtn").click(function() {
+	$(".chatbotWrapper").hide();
+	$(".bubble").show();
+});

@@ -1,0 +1,25 @@
+package shop.awesomejump.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.mapper.ProductMapper;
+import shop.awesomejump.service.IProductDAO;
+
+@Repository
+public class ProductDAOImpl implements IProductDAO {
+
+	@Autowired
+	private ProductMapper productMapper;
+
+	@Override
+	public int insertProduct(ProductDTO pDto) {
+		int result = 0;
+		result = productMapper.insertProduct(pDto);
+		return result;
+	}
+
+	
+	
+}

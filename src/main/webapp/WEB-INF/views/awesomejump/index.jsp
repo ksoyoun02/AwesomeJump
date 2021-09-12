@@ -1,0 +1,284 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags" %>
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <s:csrfMetaTags/>
+  
+  <title>AwesomeJump - index</title>
+  
+  <link rel="preload" href="/resources/awesomejump/css/style.css" as="style"/>
+  
+  <link rel="icon" href="/resources/awesomejump/img/favicon.png">
+  <link rel="stylesheet" href="/resources/awesomejump/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/animate.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/all.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/flaticon.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/themify-icons.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/magnific-popup.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/slick.css">
+  <!-- style CSS -->
+  <link rel="stylesheet" href="/resources/awesomejump/css/style.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/custom/index.css">
+  
+  <script defer src="/resources/awesomejump/js/jquery-1.12.1.min.js"></script>
+  <script defer src="/resources/awesomejump/js/popper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/bootstrap.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.magnific-popup.js"></script>
+  <script defer src="/resources/awesomejump/js/swiper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/masonry.pkgd.js"></script>
+  <script defer src="/resources/awesomejump/js/owl.carousel.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.nice-select.min.js"></script>
+  <script defer src="/resources/awesomejump/js/slick.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.counterup.min.js"></script>
+  <script defer src="/resources/awesomejump/js/waypoints.min.js"></script>
+  <script defer src="/resources/awesomejump/js/contact.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.ajaxchimp.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.form.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.validate.min.js"></script>
+  <script defer src="/resources/awesomejump/js/mail-script.js"></script>
+  <!-- custom js -->
+  <script defer src="/resources/awesomejump/js/custom.js"></script>
+  <script defer src="/resources/awesomejump/js/custom/index.js"></script>
+  <style type="text/css">
+  h3, h2, h4 {
+  font-family:"NANUM";
+  }
+  .banner_text_iner h1, p{
+   font-family:"NANUM";
+  }
+  @media (min-width: 481px) and (max-width: 767px) {
+	h1 {
+		font-size: 40px;
+	    margin-bottom: 15px;
+	    line-height: 1.3;
+	}
+	p{
+	 font-size: 20px;
+	}
+  }
+	
+  @media (min-width: 320px) and (max-width: 480px) {
+	h1 {
+		font-size: 40px;
+	    margin-bottom: 15px;
+	    line-height: 1.3;
+	}
+	p{
+	 font-size: 20px;
+	}
+  }
+  </style>
+</head>
+
+<body>
+
+  <jsp:include page="/WEB-INF/templates/awesomejump/header.jsp"/>
+
+  <!-- banner part start -->
+  <section class="banner_part">
+    <!-- 회원 탈퇴 결과 알림 모달 -->
+    <c:if test="${leaveResult eq true}">
+      <div style="position: relative; top: 100px !important; z-index: 100;">
+        <jsp:include page="/WEB-INF/templates/awesomejump/alertSuccess.jsp">
+          <jsp:param value="성공적으로 탈퇴 되었습니다. 사이트를 이용해주셔서 감사합니다." name="alert"/>
+        </jsp:include>
+      </div>
+    </c:if>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-12">
+          <div class="banner_slider owl-carousel">
+          
+          <!-- banner 1 -->
+            <div class="single_banner_slider">
+              <div class="row">
+                <div class="col-lg-7 col-md-8">
+                  <div class="banner_text">
+                    <div class="banner_text_iner" style="padding-left: 70px; padding-top: 150px;">
+                    	<h1 style="color: #ff3333; font-weight: bold;">무료배송</h1>
+                    	<p>어쩜은 무조건 배송료가 0원!</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="banner_img d-none d-lg-block">
+                  <img src="/resources/awesomejump/img/main/메인베너.JPG" alt="">
+                </div>
+              </div>
+            </div>
+            <!-- banner 1 END -->
+            
+            <!-- banner 2 -->
+            <div class="single_banner_slider">
+              <div class="row">
+                <div class="col-lg-7 col-md-8">
+                  <div class="banner_text">
+                    <div class="banner_text_iner" style="text-align: center;"> 
+                      <h1 style="font-weight: bold;margin-top: 150px;">쿠폰받고</h1>
+                      <h1 style="font-weight: bold;">할인받자!</h1>
+                      <a href="/couponList" class="btn_2"
+                      	style="border-radius: 30px;
+					    width: 200px;
+					    margin-top: 20px;
+					    font-family: 'NANUM';">
+    					쿠폰받으러가기</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="banner_img d-none d-lg-block">
+                  <img src="/resources/awesomejump/img/main/베너3.JPG" alt="" style="padding-right: 120px;"> 
+                </div>
+              </div>
+            </div>
+            <!-- banner2 end -->
+            
+          </div>
+          <div class="slider-counter"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- banner part end -->
+
+
+
+  <!-- feature_part start-->
+  <section class="feature_part padding_top">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="section_tittle text-center">
+          <h2>추천 카테고리</h2>
+        </div>
+      </div>
+      <div class="row align-items-center justify-content-between">
+        <div class="col-lg-7 col-sm-6">
+          <div class="single_feature_post_text">
+            <p>Premium Quality</p>
+            <h3>침대</h3>
+            <a href="/category?category_main=200&sort_option=1" class="feature_btn">
+              EXPLORE NOW <i class="fas fa-play"></i>
+            </a> 
+            <img src="/resources/awesomejump/img/feature/feature_1.png" alt="">
+          </div>
+        </div>
+        <div class="col-lg-5 col-sm-6">
+          <div class="single_feature_post_text">
+            <p>Premium Quality</p>
+            <h3>의자</h3>
+            <a href="/category?category_main=100&sort_option=1" class="feature_btn">
+              EXPLORE NOW <i class="fas fa-play"></i>
+            </a>
+            <img src="/resources/awesomejump/img/feature/feature_2.png" alt="">
+          </div>
+        </div>
+        <div class="col-lg-5 col-sm-6">
+          <div class="single_feature_post_text">
+            <p>Premium Quality</p>
+            <h3>책상</h3>
+            <a href="/category?category_main=300&sort_option=1" class="feature_btn">
+              EXPLORE NOW <i class="fas fa-play"></i>
+            </a> 
+            <img src="/resources/awesomejump/img/feature/feature_3.png" alt="">
+          </div>
+        </div>
+        <div class="col-lg-7 col-sm-6">
+          <div class="single_feature_post_text">
+            <p>Premium Quality</p>
+            <h3>소파</h3>
+            <a href="/category?category_main=500&sort_option=1" class="feature_btn">
+              EXPLORE NOW <i class="fas fa-play"></i>
+            </a> 
+            <img src="/resources/awesomejump/img/feature/feature_4.png" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- upcoming_event part start-->
+
+
+
+  <!-- Best -->
+  <section class="product_list best_seller section_padding">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="section_tittle text-center">
+            <h2>
+              Best Sellers <span>shop</span>
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center justify-content-between">
+        <div class="col-lg-12">
+          <div class="best_product_slider owl-carousel">
+            <c:forEach items="${bestList}" var="bestList">
+	            <div class="single_product_item">
+	              <a href="/memDetailProduct?product_no=${bestList.product_no}"><img src="/upload${bestList.product_thumb_img }" alt=""></a>
+	              <div class="single_product_text">
+	                <h4>${bestList.product_name}</h4>
+	                <h3>${bestList.product_price}원</h3>
+	              </div>
+	            </div>
+            </c:forEach>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Best end-->
+  
+  <!-- subscribe_area part start-->
+  <section class="client_logo padding_top">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-12">
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_1.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_2.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_3.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_4.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_5.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_3.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_1.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_2.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_3.png" alt="">
+          </div>
+          <div class="single_client_logo">
+            <img src="/resources/awesomejump/img/client_logo/client_logo_4.png" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--::subscribe_area part end::-->
+
+  <jsp:include page="/WEB-INF/templates/awesomejump/footer.jsp"/>
+
+  <!-- Chatbot -->
+  <jsp:include page="/WEB-INF/templates/awesomejump/chatbot.jsp"/>
+
+</body>
+</html>

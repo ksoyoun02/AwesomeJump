@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.AdminMembersMapper">
+	
+	<select id="selectMemberListCount" resultType="int">
+		<![CDATA[
+		SELECT COUNT(*)
+		FROM member
+		WHERE mem_no > 0
+		]]>
+		<include refid="criteria"/>
+	</select>
+	
+	<select id="selectMemberList" resultType="shop.awesomejump.domain.MemberDTO">
+		<![CDATA[
+		SELECT *
+		FROM (SELECT ROWNUM RNUM, MEM.*
+		      FROM (SELECT *
+		            FROM member
+		            WHERE mem_no > 0
+		            ]]>
+					<include refid="criteria"/>
+					<![CDATA[
+		            ORDER BY mem_no DESC) MEM)
+		WHERE RNUM BETWEEN #{listStart} AND #{listEnd}
+		]]>
+	</select>
+	
+	  <sql id="criteria">
+	 	<if test="email != null and email != ''">
+		  AND mem_email LIKE '%'||#{email}||'%'
+	    </if>
+	    <if test="nickname != null and nickname != ''">
+	      AND mem_nickname LIKE '%'||#{nickname}||'%'
+	    </if>
+	    <if test="lastLoginBegin != null and lastLoginBegin != '' and lastLoginEnd != null and lastLoginEnd != null">
+	      AND mem_last_login BETWEEN TO_DATE(#{lastLoginBegin}, 'YYYY-MM-DD') AND TO_DATE(#{lastLoginEnd}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="status != null and status != ''">
+	      AND mem_enabled_yn = #{status}
+	    </if>
+	  </sql>
+	<select id="selectMember" resultType="shop.awesomejump.domain.MemberDTO">
+		select *
+		from member
+		where mem_no = #{mem_no}
+	</select>
+</mapper>

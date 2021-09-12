@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.OrderMapper">
+	
+	<select id="selectOrderInfoList" resultType="shop.awesomejump.domain.OrderInfoDTO">
+		SELECT *
+		FROM order_info
+		WHERE mem_no = #{mem_no}
+	</select>
+	
+	<select id="selectMemberOrderDetailList" resultType="shop.awesomejump.domain.MemberOrderDetailDTO">
+		SELECT o.*, 
+		       p.product_name, p.product_price, 
+		       po.product_option_color, po.product_option_size
+		  FROM order_detail o, 
+		  	   product p, 
+		  	   product_option po
+		 WHERE o.order_info_uid = #{order_info_uid}
+		   AND po.product_option_no = o.product_option_no
+		   AND o.product_no = p.product_no
+	</select>
+	
+	<!--주문 정보 -->
+	<insert id="insertOrder" parameterType="shop.awesomejump.domain.OrderInfoDTO">
+		INSERT INTO order_info(order_info_uid, mem_no, order_info_imp_uid, order_info_name,
+							   order_info_date, order_info_price, order_info_approval,
+							   order_info_mem_name, order_info_mem_phone, order_info_receive_name,
+							   order_info_phone, order_info_postcode, order_info_address<if test="order_request !='' and order_request != null">,order_info_request</if> )
+		VALUES(#{order_info_uid},#{mem_no},#{order_info_imp_uid},
+			   #{order_info_name},SYSDATE,#{order_info_price},m
+			   #{order_info_approval},#{order_info_mem_name},
+			   #{order_info_mem_phone},#{order_info_receive_name},
+			   #{order_info_phone},#{order_info_postcode},
+			   #{order_info_address}<if test="order_request !='' and order_request != null">,#{order_info_request})</if>
+	</insert>
+	<!--주문 상세 정보  -->
+	<insert id="insertOrderDetail" parameterType="shop.awesomejump.domain.OrderDetailDTO">
+		INSERT INTO order_detail
+		VALUES(order_detail_seq.NEXTVAL,#{order_info_uid},#{product_no},
+			   #{order_detail_quantity},#{order_detail_shipping})
+	</insert>
+	
+</mapper>

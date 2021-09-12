@@ -1,0 +1,8 @@
+package shop.awesomejump.mapper;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface ProductMapper {
+
+	public int insertProduct(ProductDTO pDto);
+}

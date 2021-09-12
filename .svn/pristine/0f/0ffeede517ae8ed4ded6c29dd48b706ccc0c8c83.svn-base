@@ -1,0 +1,88 @@
+package shop.awesomejump.config.security;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import shop.awesomejump.domain.CustomAdapter;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.mapper.MemberMapper;
+import shop.awesomejump.util.FileUtils;
+
+@Slf4j
+public class CustomSuccessHandler implements AuthenticationSuccessHandler {
+	
+	@Autowired
+	private MemberMapper memberMapper;
+
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+		
+		CustomAdapter memberAdapter = (CustomAdapter) authentication.getPrincipal();
+			//AccountService의 UserDetails의 구현체가 리턴해주는 스프링 시큐리티 유저를 받아 올 수 있음
+		MemberDTO member = memberAdapter.getMember();
+		
+		RequestCache requestCache = new HttpSessionRequestCache();
+		SavedRequest savedRequest = requestCache.getRequest(request, response);
+		String indexPage = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+		String adminIndexPage = indexPage + "/admin";
+		String targetUrl = "";
+		
+		member.setMem_pw("[PROTECTED]");
+		memberAdapter.eraseCredentials();
+		
+		List<String> adminList = new ArrayList<>();
+		adminList.add("admin@email.com");
+		adminList.add("admin2@email.com");
+		
+		if (adminList.contains(member.getMem_email())) {
+			SecurityContextHolder.getContext()
+			.setAuthentication(new UsernamePasswordAuthenticationToken
+				(member, memberAdapter.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))));
+	
+			log.debug("Admin 로그인에 성공하였습니다.");
+			targetUrl = savedRequest == null ? adminIndexPage : savedRequest.getRedirectUrl();
+			
+		} else {
+			memberMapper.updateLastLogin(member);
+			MemberDTO modifiedMember = new FileUtils().setMemberProfileImagePath(member);
+			
+			SecurityContextHolder.getContext()
+			.setAuthentication(new UsernamePasswordAuthenticationToken
+				(modifiedMember, memberAdapter.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))));
+			
+			log.debug("Customer 로그인에 성공하였습니다.");
+			targetUrl = savedRequest == null ? indexPage : savedRequest.getRedirectUrl();
+		}
+
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("targetUrl", targetUrl);
+		paramMap.put("loginResult", 1);
+		
+		String loginResult = new ObjectMapper().writeValueAsString(paramMap);
+		response.getWriter().print(loginResult);
+		
+	}
+
+}

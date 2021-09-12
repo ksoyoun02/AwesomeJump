@@ -1,0 +1,26 @@
+package shop.awesomejump.mapper;
+
+import java.util.List;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface ProductMapper {
+
+	// 상품 등록
+	public int insertProduct(ProductDTO pDto) throws Exception;
+	
+	// 상품 목록
+	public List<ProductDTO> listProduct() throws Exception;
+	
+	// 상품 상세 정보
+	public ProductDTO detailProduct(int product_no) throws Exception;
+	
+	// 상품 수정
+	public int modifyProduct(ProductDTO pDto) throws Exception;
+	
+	// 상품 삭제
+	public int deleteProduct(int product_no) throws Exception;
+	
+	
+
+}

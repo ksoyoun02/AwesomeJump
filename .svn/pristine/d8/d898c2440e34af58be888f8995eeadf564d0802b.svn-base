@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.MemProductMapper">
+
+
+<!-- 주영 / 상세상품 진입 전 product_no 비교 -->
+<select id="memDetail" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+SELECT product_no,product_name,product_grade,product_price
+FROM product
+WHERE product_no=#{product_no}
+</select>
+
+
+<!-- 주영 / 상세상품 페이지 내의 뿌려질 데이터들 -->
+<select id="memDetailProduct" resultType="shop.awesomejump.domain.ProductDTO">
+SELECT product_name,
+        p.product_interest_yn,
+        p.product_stock,
+        p.product_content,
+        p.product_point,
+        p.product_review,
+        p.product_texture,
+        p.product_thumb_img,
+        p.product_grade,
+        p.product_price,
+        product_option_size,
+       product_option_color
+FROM  product p, product_option o
+WHERE o.product_no = #{o.product_no} AND p.product_no = #{p.product_no}
+</select>	
+	
+</mapper>

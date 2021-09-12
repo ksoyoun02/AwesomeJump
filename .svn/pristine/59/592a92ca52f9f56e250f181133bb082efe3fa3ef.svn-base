@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.ProductMapper">
+
+	<!-- 상품 전체 리스트 출력 -->
+	<select id="selectProductAllList" resultType="shop.awesomejump.domain.ProductDTO">
+		SELECT *
+		FROM product
+	</select>
+	
+	<!-- 상품 상세정보 -->
+	<select id="selectProductDetail" resultType="shop.awesomejump.domain.ProductDTO">
+		SELECT *
+		FROM product
+	</select>
+
+	<!-- 상품 정보 등록 -->
+	
+	<insert id="insertProduct">
+		INSERT INTO product(
+			product_no, 
+			category_no, 
+			product_stock, 
+			product_point, 
+			product_name, 
+			product_price, 
+			product_content, 
+			product_main, 
+			product_mid, 
+			product_sub, 
+			product_texture
+		)
+		VALUES(
+			product_seq.nextval, 
+			#{category_no}, 
+			#{product_stock}, 
+			#{product_point}, 
+			#{product_name}, 
+			#{product_price}, 
+			#{product_content}, 
+			#{product_main}, 
+			#{product_mid}, 
+			#{product_sub}, 
+			#{product_texture} 
+		)
+		
+		<selectKey keyProperty="product_no" resultType="int" order="AFTER">
+			 SELECT product_seq.currval FROM dual
+		</selectKey>
+		
+	</insert>
+
+	
+	<!-- 상품 이미지 등록 -->
+	
+	
+	
+	<!-- 상품 옵션 등록 -->
+	<insert id="insertOption">
+		SELECT product_no
+		FROM product
+		WHERE product_no = #{product_no};
+	</insert>
+	
+	<!-- 상품 카테고리(검색) 등록 -->
+
+
+	<!-- 상품 삭제 -->
+ 	<delete id="deleteProduct">
+		DELETE FROM 	product
+		WHERE 			product_no = #{product_no}
+	</delete> 
+  
+</mapper>

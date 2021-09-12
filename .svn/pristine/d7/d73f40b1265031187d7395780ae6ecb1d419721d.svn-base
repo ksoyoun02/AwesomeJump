@@ -1,0 +1,15 @@
+package shop.awesomejump.domain;
+
+import lombok.Data;
+
+@Data
+public class ListCartDTO {
+
+	private String product_image_path;
+	private String product_name;
+	private String product_texture;
+	private String product_option_color;
+	private String product_option_size;
+	private int cart_amount;
+	private int sum;
+}

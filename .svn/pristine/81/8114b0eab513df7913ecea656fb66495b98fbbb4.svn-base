@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.CategoryMapper">
+
+	<!--  카테고리 전체목록  --> 
+	<select id="selectCategoryBig" resultType="shop.awesomejump.domain.CategoryDTO" >
+		SELECT DISTINCT category_main
+		FROM category
+		ORDER BY category_main ASC
+	</select>
+
+
+	<!--  카테고리 대, 중목록  --> 
+	<select id="selectCategoryBigMiddle" resultType="shop.awesomejump.domain.CategoryDTO" >
+		SELECT DISTINCT category_main, category_mid
+		FROM category
+		WHERE category_main = category_main
+		ORDER BY category_main ASC
+	</select>
+
+
+	<!--  카테고리 대,중,소목록  --> 
+	<select id="selectCategoryBigMiddleSmall" resultType="shop.awesomejump.domain.CategoryDTO" >
+		SELECT DISTINCT category_main, category_mid, category_sub
+		FROM category
+		WHERE category_main = category_main
+		ORDER BY category_main ASC
+	</select>
+
+
+	<!--  카테고리 대분류 검색 -->
+	<select id="selectCategoryBigSearch" resultType="shop.awesomejump.domain.CategoryDTO" parameterType="shop.awesomejump.domain.CategoryDTO">
+		SELECT *
+		FROM category
+		where category_main= #{category_main}
+	</select> 
+	
+
+	<!-- 카테고리 대분류, 중분류 검색 -->
+
+	<select id="selectCategoryBigMiddleSearch" resultType="shop.awesomejump.domain.CategoryDTO" parameterType="shop.awesomejump.domain.CategoryDTO">
+		SELECT *
+		FROM category
+		where category_main= #{category_main} AND category_mid = #{category_mid}
+	</select>
+	
+	<!-- 수정 필요 -->
+	<!-- 카테고리 대분류, 중분류 검색
+	<select id="selectCategoryBigMiddle" resultType="shop.awesomejump.domain.CategoryDTO" parameterType="String">
+		SELECT DISTINCT category_mid
+		FROM category
+		where category_main= #{category_main}
+	</select> 
+	-->
+	
+ 	<!-- 카테고리 대분류, 중분류, 소분류 검색 -->
+	<select id="selectCategoryMiddleSmallSearch" resultType="shop.awesomejump.domain.CategoryDTO" parameterType="shop.awesomejump.domain.CategoryDTO">
+		SELECT *
+		FROM category
+		WHERE category_main= #{category_main} AND category_mid = #{category_mid} AND category_sub = #{category_sub}
+	</select> 
+	
+	<!-- 카테고리에 해당하는 상품 목록 출력 -->
+	<select id="selectCategoryAndProduct" resultType="shop.awesomejump.domain.CategoryDTO" parameterType="shop.awesomejump.domain.CategoryDTO">
+	SELECT *
+	FROM product
+	WHERE  category_no IN (SELECT category_no
+                        FROM category
+                        WHERE category_main= #{category_main} AND category_mid=#{category_mid} AND category_sub = #{category_sub});
+	</select> 
+	
+</mapper>

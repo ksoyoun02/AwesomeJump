@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.ProductMapper">
+	
+	<!-- 관리자 / 상품 정보 등록 -->
+	<insert id="insertProduct">
+		INSERT INTO product(
+			product_no, 
+			product_stock, 
+			product_point, 
+			product_name, 
+			product_price, 
+			product_content, 
+			category_main, 
+			category_mid, 
+			category_sub, 
+			product_texture
+		)
+		VALUES(
+			product_seq.nextval, 
+			#{product_stock}, 
+			#{product_point}, 
+			#{product_name}, 
+			#{product_price}, 
+			#{product_content}, 
+			#{category_main}, 
+			#{category_mid}, 
+			#{category_sub}, 
+			#{product_texture} 
+		)
+		
+		<selectKey keyProperty="product_no" resultType="int" order="AFTER">
+			 SELECT product_seq.currval FROM dual
+		</selectKey>
+		
+	</insert>
+
+	<!-- 관리자 / 상품 옵션 등록 -->
+	<insert id="insertOption">
+		SELECT product_no
+		FROM product
+		WHERE product_no = #{product_no}
+	</insert>
+  
+  <!-- 관리자 / 상품 목록 -->
+  <select id="listProduct" resultType="shop.awesomejump.domain.ProductDTO">
+  	SELECT
+  		product_no, 
+			product_stock, 
+			product_point, 
+			product_name, 
+			product_price, 
+			product_content, 
+			category_main, 
+			category_mid, 
+			category_sub, 
+			product_texture
+		FROM product
+  	order by product_no asc
+  </select>
+  
+  <!-- 관리자 / 상품 검색 목록 -->
+  <select id="serchProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="String">
+  	SELECT
+  		product_no, 
+			product_stock, 
+			product_point, 
+			product_name, 
+			product_price, 
+			product_content, 
+			category_main, 
+			category_mid, 
+			category_sub, 
+			product_texture
+		FROM product
+  	WHERE product_name LIKE '%'||#{product_name}||'%'
+  	order by product_no asc
+  </select>
+  
+  <!-- 관리자 / 상품 상세 정보 -->
+  <select id="detailProduct" resultType="shop.awesomejump.domain.ProductDTO">
+  	SELECT
+  		product_no, 
+			product_stock, 
+			product_point, 
+			product_name, 
+			product_price, 
+			product_content, 
+			category_main, 
+			category_mid, 
+			category_sub, 
+			product_texture
+		FROM product
+		WHERE product_no = #{product_no}
+  </select>
+  
+  <!-- 관리자 / 상품 수정 -->
+  <update id="modifyProduct" parameterType="shop.awesomejump.domain.ProductDTO">
+  	UPDATE product
+  	SET
+		  product_stock = #{product_stock}, 
+			product_point = #{product_point}, 
+			product_name = #{product_name}, 
+			product_price = #{product_price}, 
+			product_content = #{product_content}, 
+			category_main = #{category_main}, 
+			category_mid = #{category_mid}, 
+			category_sub = #{category_sub}, 
+			product_texture = #{product_texture}
+		WHERE product_no = #{product_no}
+  </update>
+  
+  <!-- 관리자 / 상품 이미지 등록 -->
+  <insert id="insertProductImage">
+  	INSERT INTO pro_image(pro_image_no, product_no, pro_image_path, pro_image_name, pro_image_type, pro_image_uuid)
+  	VALUES(pro_image_seq.nextval, #{product_no}, #{pro_image_path}, #{pro_image_name}, #{pro_image_type}, #{pro_image_uuid})
+  </insert>
+  
+  <!-- 관리자 / 상품 이미지 출력 -->
+  <select id="getImageList" resultType="shop.awesomejump.domain.ProImageDTO">
+  	SELECT *
+  	FROM pro_image
+  	WHERE product_no = #{product_no}
+  </select>
+  
+  <!-- 관리자 / 수정할 상품 이미지 전체 삭제 -->
+  <delete id="deleteImageAll">
+  	DELETE FROM pro_image
+  	WHERE product_no = #{product_no}
+  </delete>
+  
+  <!-- 주영 / 상세상품에 대한 옵션 출력 -->
+  <select id="selectProductOption" resultType="shop.awesomejump.domain.ProductOptionDTO" parameterType="int">
+		SELECT p.product_no, p.product_name ,o.product_option_color, o.product_option_size, o.product_option_no
+		FROM product_option o, product p
+		where p.product_no = o.product_no 
+		AND o.product_no= #{o.product_no}
+  </select>
+
+  
+  <!--지민 / 결제페이지 사용  -->
+  <select id="getProduct" resultType="shop.awesomejump.domain.ProductDTO">
+  	SELECT *
+  	FROM product
+  	WHERE product_no=#{product_no}
+  </select>
+  
+  <!-- 상품 리뷰 점수 업데이트  -->
+  <update id="updateProductReview">
+    UPDATE product 
+	SET product_grade = (SELECT AVG(review_grade) 
+	                     FROM review 
+	                     WHERE product_no = #{product_no}) 
+	WHERE product_no = #{product_no}
+  </update>
+  
+	<select id="selBestPro" resultType="shop.awesomejump.domain.ProductDTO">
+		<![CDATA[
+			SELECT PRODUCT_NO, PRODUCT_NAME, product_price, product_grade
+			FROM PRODUCT
+			WHERE ROWNUM <= 10 
+			ORDER BY product_grade DESC
+		]]>
+	</select>
+	
+</mapper>

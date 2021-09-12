@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.ReviewMapper">
+	
+	<insert id="insertReview">
+		INSERT INTO review
+		VALUES(review_seq.NEXTVAL, #{product_no}, #{mem_no}, #{order_detail_no}, 
+		       #{review_grade}, #{review_content}, #{review_name}, SYSDATE, 0, 0)
+		<selectKey resultType="int" keyProperty="review_no" order="AFTER">
+       		SELECT review_seq.CURRVAL FROM DUAL
+    	</selectKey>   
+	</insert>
+
+	<insert id="insertReviewImage">
+		INSERT INTO review_image
+		VALUES(#{review_no}, #{review_image_path}, #{review_image_name}, 
+			   #{review_image_type}, review_image_seq.NEXTVAL)
+	</insert>
+	
+	<select id="selectReviewList" resultType="shop.awesomejump.domain.ReviewDTO" parameterType="int">
+		<![CDATA[
+		SELECT abc.*
+		FROM (SELECT 	rv.review_no
+                        , rv.review_grade
+                        , rv.review_content
+                        , rv.review_date
+                        , mem.mem_nickname 	review_name
+				FROM 	review rv
+                        INNER JOIN member mem
+                        ON rv.mem_no = mem.mem_no
+				WHERE	rv.product_no = 29
+				ORDER BY rv.review_date DESC ) abc
+		WHERE ROWNUM BETWEEN 1 AND 10
+		]]>
+	</select>
+	
+</mapper>

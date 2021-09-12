@@ -1,0 +1,13 @@
+INSERT INTO qna(qna_no, mem_no, qna_category, qna_title, qna_content, qna_name, qna_ref, qna_restep, qna_relevel)
+VALUES(qna_seq.NEXTVAL, 11, '배송문의', '저번주에 주문했는데 안왔어요', '배송 언제 되나요', '테스트아이디', qna_seq.NEXTVAL, 1, 0);
+INSERT INTO qna(qna_no, mem_no, qna_category, qna_title, qna_content, qna_name, qna_ref, qna_restep, qna_relevel)
+VALUES(qna_seq.NEXTVAL, 11, '기타문의', '회원 탈퇴 관련 문의', '탈퇴해도 나중에 복구 가능한가요?', '테스트아이디', qna_seq.NEXTVAL, 1, 0);
+INSERT INTO qna(qna_no, mem_no, qna_category, qna_title, qna_content, qna_name, qna_ref, qna_restep, qna_relevel)
+VALUES(qna_seq.NEXTVAL, 11, '입금문의', '물건이 하나만 왔는데', '환불받고싶어요', '테스트아이디', qna_seq.NEXTVAL, 1, 0);
+
+INSERT INTO pro_qna(pro_qna_no, product_no, mem_no, pro_qna_title, pro_qna_content, pro_qna_name)
+VALUES(pro_qna_seq.NEXTVAL, 12, 11, '침대 문의', '내구성이 어떻게 되나요?', '테스트아이디');
+INSERT INTO pro_qna(pro_qna_no, product_no, mem_no, pro_qna_title, pro_qna_content, pro_qna_name)
+VALUES(pro_qna_seq.NEXTVAL, 19, 11, '소파 가죽이 어떤건가요', '알려주세요', '테스트아이디');
+
+commit;

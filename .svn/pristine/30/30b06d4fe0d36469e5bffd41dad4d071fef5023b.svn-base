@@ -1,0 +1,30 @@
+package shop.awesomejump.mapper;
+
+import java.util.List;
+
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.ProImageDTO;
+import shop.awesomejump.domain.ProInterestDTO;
+import shop.awesomejump.domain.ProductDTO;
+
+public interface MemProductMapper {
+	
+	// 주영 / 회원 상품 상세 정보
+	public ProductDTO memDetail(int product_no) throws Exception;
+	
+	// 주영 / 회원 상품 상세 정보
+	public List<ProductDTO> memDetailProduct() throws Exception;
+	
+	// 주영 / 회원 상품 상세 정보 이미지
+	public List<ProImageDTO> getMemImageList(int product_no) throws Exception;
+
+	// 주영 / 상품담기 버튼 클릭시 회원 장바구니에 등록
+	public int insertProductCart(CartDTO cart) throws Exception;
+	
+	// 주영 / 관심상품 1개 등록
+	public int interestInsertMember(ProInterestDTO interest) throws Exception;
+	
+	// 주영 / 동일한 관심상품 1개 삭제
+	public int interestDeleteMember(ProInterestDTO interest) throws Exception;
+	
+}

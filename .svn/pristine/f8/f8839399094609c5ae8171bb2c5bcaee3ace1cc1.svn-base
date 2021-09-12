@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.QnaMapper">
+	<insert id="insert">
+		INSERT INTO qna(qna_no, qna_ref, mem_no, qna_category, qna_title, qna_content, qna_name)
+		VALUES (qna_seq.nextval, qna_seq.currval, #{mem_no}, #{qna_category}, #{qna_title}, #{qna_content}, #{qna_name})
+	</insert>
+	
+	<insert id="insertReply" >
+		INSERT INTO qna (qna_no, qna_ref, mem_no, qna_category, qna_title, qna_content, qna_name, qna_restep, qna_relevel)
+		VALUES (qna_seq.NEXTVAL, #{qna_no}, #{mem_no}, #{qna_category}, #{qna_title}, #{qna_content}, #{qna_name}, #{qna_restep} + 1, #{qna_relevel} + 1)
+	</insert>
+	
+	<update id="updateReplyYN">
+		UPDATE qna
+		SET qna_reply_yn=REPLACE(qna_reply_yn, 'n', 'y')
+		WHERE qna_ref = #{qna_ref}
+	</update> 
+	
+	<select id="getList" resultType="shop.awesomejump.domain.QnaDTO">
+	<![CDATA[
+		SELECT *
+		FROM qna
+		WHERE qna_no > 0
+	]]>
+	</select>
+	
+	<sql id="search">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach collection="typeArr" item="type">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							qna_title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							qna_content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							qna_name like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<select id="listPaging" resultType="shop.awesomejump.domain.QnaDTO">
+		<![CDATA[
+			SELECT qna_no, mem_no, qna_category, qna_title, qna_content, qna_reply_yn, qna_name, qna_date, qna_ref, qna_relevel
+			FROM
+				(
+				SELECT /*+ INDEX_DESC(qna SYS_C0013711) */
+					rownum rn, qna_no, mem_no, qna_category, qna_title, qna_content, qna_reply_yn, qna_name, qna_date, qna_ref, qna_relevel
+				FROM qna
+				WHERE
+		]]> 
+		
+		<include refid="search"></include>
+		
+		<![CDATA[
+				rownum <= #{pageNum} * #{amount}
+				ORDER BY qna_ref DESC, qna_relevel ASC
+				)
+			WHERE rn > (#{pageNum} -1) * #{amount}
+		]]>
+	</select>
+	
+	<select id="getTotalCount" resultType="int" >
+		SELECT count(*)
+		FROM qna
+		WHERE 
+		<include refid="search"></include>
+		qna_no > 0
+	</select>
+	
+	<select id="read" resultType="shop.awesomejump.domain.QnaDTO">
+		SELECT * 
+		FROM qna
+		WHERE qna_no=#{qna_no}
+	</select>
+	
+	<select id="readReply" resultType="shop.awesomejump.domain.QnaDTO">
+		SELECT rownum, b.*
+		FROM qna a, qna b
+		WHERE a.qna_ref = b.qna_ref
+		AND b.qna_ref = ${qna_ref}
+		AND b.qna_relevel = 1
+		AND rownum = 1
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM qna WHERE qna_no = #{qna_no}
+	</delete>
+	
+	<delete id="deleteReply">
+		DELETE FROM qna WHERE qna_no=#{qna_no}
+	</delete>
+	
+	<update id="update">
+		UPDATE qna
+		SET qna_category = #{qna_category},
+			qna_title = #{qna_title},
+			qna_content = #{qna_content},
+			qna_date = sysdate
+		WHERE qna_no = #{qna_no}
+	</update>
+	
+	<update id="updateReply">
+		UPDATE qna
+		SET qna_category = #{qna_category},
+			qna_title = #{qna_title},
+			qna_content = #{qna_content},
+			qna_update = sysdate
+		WHERE qna_no = #{qna_no}
+	</update>
+	
+</mapper>

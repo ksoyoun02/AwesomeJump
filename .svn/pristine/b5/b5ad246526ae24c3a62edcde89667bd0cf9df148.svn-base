@@ -1,0 +1,17 @@
+package shop.awesomejump.service;
+
+import java.util.List;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface IProductDAO {
+
+	// 상품 등록
+	public int insertProduct(ProductDTO pDto) throws Exception;
+	
+	// 상품 목록
+	public List<ProductDTO> listProduct() throws Exception;
+	
+	// 상품 상세 정보
+	public ProductDTO detailProduct() throws Exception;
+}

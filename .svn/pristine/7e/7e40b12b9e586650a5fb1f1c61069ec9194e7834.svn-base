@@ -1,0 +1,32 @@
+package shop.awesomejump.controller;
+
+
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import lombok.extern.log4j.Log4j;
+import shop.awesomejump.config.RootConfig;
+import shop.awesomejump.config.ServletConfig;
+import shop.awesomejump.service.IAddressDAO;
+import shop.awesomejump.service.IMemberDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@Log4j
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {ServletConfig.class, RootConfig.class})
+public class MemberControllorTest {
+
+	@Autowired
+	private IProductDAO pDao;
+	
+	@Test
+	public void testGetMem() throws Exception{
+		log.info("mDao.getMem() ===>" + pDao.selectProductOption(13));
+	}
+
+}

@@ -1,0 +1,18 @@
+package shop.awesomejump.service;
+
+import java.util.List;
+
+import shop.awesomejump.domain.Paging;
+import shop.awesomejump.domain.QnaDTO;
+
+public interface IQnaDAO {
+	public int register(QnaDTO qDto);
+	
+	public QnaDTO get(int qna_no);
+	
+	public boolean modify(QnaDTO qDto);
+	
+	public boolean remove(int qna_no);
+	
+	public List<QnaDTO> getList(Paging page);
+}

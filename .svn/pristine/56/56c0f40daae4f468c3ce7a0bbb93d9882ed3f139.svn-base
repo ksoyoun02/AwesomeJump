@@ -1,0 +1,16 @@
+package shop.awesomejump.service;
+
+import java.util.List;
+
+import shop.awesomejump.domain.ProductOptionDTO;
+
+public interface IOptionDAO {
+
+	// 상품 옵션 등록
+	public int insertOption(ProductOptionDTO optionDto);
+	
+
+	// 상품 옵션
+	public List<ProductOptionDTO> listOption() throws Exception;
+	
+}

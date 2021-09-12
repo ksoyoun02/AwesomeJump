@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.CartMapper">
+	
+	<!-- 장바구니 담기 -->
+	<insert id="insertCart">
+		INSERT INTO cart(cart_no, mem_no, product_no, cart_amount)
+		VALUES(cart_seq.nextval,#{mem_no}, #{product_no}, #{cart_amount})
+	</insert>
+	
+	<!-- 수정 필요 -->
+	<!-- 장바구니 목록 -->
+	<!--  상품이미지, 상품제목, 상품색상, 상품크기, 상품재질, 상품수량, 상품가격-->
+	<select id="listCart" resultType="shop.awesomejump.domain.ListCartDTO">
+		SELECT 	c.cart_no,
+				p.product_no,
+				p.product_image_path,
+				p.product_name,
+				p.product_texture,
+				c.cart_amount,
+				(p.product_price*c.cart_amount) sum
+		FROM product p,  cart c, member m
+		WHERE m.mem_no = c.mem_no
+		AND p.product_no = c.product_no
+		AND c.mem_no=#{mem_no}
+		ORDER BY cart_no
+	</select>
+	<!--상품 옵션 목록 -->
+	<select id="cartOption" resultType="shop.awesomejump.domain.CartOptionDTO">
+		SELECT product_option_color,
+       			product_option_size
+		FROM   product_option
+		WHERE  product_no=#{product_no}
+	</select>
+	<!-- 장바구니 상품총액, 총 포인트 -->
+	<select id="totalCart" resultType="shop.awesomejump.domain.TotalCartDTO">
+		SELECT SUM(p.product_price*c.cart_amount) totalPrice,
+		SUM(p.product_point*c.cart_amount) totalPoint
+		FROM product p, cart c,member m
+		WHERE m.mem_no = c.mem_no
+		AND p.product_no = c.product_no
+		AND c.mem_no=#{mem_no}
+	</select>
+	
+	<!-- 장바구니 부분 삭제 -->
+	<delete id="deleteCart" parameterType="int">
+		DELETE FROM cart
+		WHERE cart_no=#{cart_no}
+	</delete>
+	
+	<!--장바구니 상품 조회  -->
+	<select id="selectCart">
+		SELECT product_option_size,
+			   product_option_color,
+			   cart_amount
+		FROM product_option o, cart c, member m
+		WHERE m.mem_no = c.mem_no
+		AND o.product_no = c.product_no
+		AND c.product_no =#{product_no}
+	</select>
+	
+	<!-- 장바구니 수량수정 -->
+	 <update id="modifyCart">
+		UPDATE cart 
+		SET cart_amount=#{cart_amount}				
+		WHERE cart_no=#{cart_no}
+	</update>
+	
+	<!--상품 옵션 수정  -->
+	<update id="modifyProduct">
+		UPDATE product_option
+		SET product_option_size=#{product_option_size},
+			product_option_color=#{product_option_color}
+		WHERE product_no=#{product_no}
+	</update>
+	
+	<!-- 장바구니 전체 삭제 -->
+	<delete id="deleteAllCart">
+		DELETE FROM cart
+		WHERE mem_no=#{mem_no}
+	</delete>
+
+</mapper>

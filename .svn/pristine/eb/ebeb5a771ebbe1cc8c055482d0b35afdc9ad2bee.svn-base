@@ -1,0 +1,12 @@
+.card, .card-header {
+  background-color: white;
+  border-radius: 0;
+}
+
+.card-header {
+  border: none;
+}
+
+.orderDetailInfo > div {
+  width: 20%;
+}

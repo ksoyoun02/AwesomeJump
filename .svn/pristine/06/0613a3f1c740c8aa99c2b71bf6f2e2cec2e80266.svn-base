@@ -1,0 +1,8 @@
+package shop.awesomejump.service;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface IProductDAO {
+
+	public int insertProduct(ProductDTO pDto);
+}

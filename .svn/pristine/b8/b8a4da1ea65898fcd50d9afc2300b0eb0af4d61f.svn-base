@@ -1,0 +1,29 @@
+package shop.awesomejump.mapper;
+
+import java.util.List;
+
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.CartOptionDTO;
+import shop.awesomejump.domain.ListCartDTO;
+import shop.awesomejump.domain.TotalCartDTO;
+
+public interface CartMapper {
+	
+	public int insertCart(CartDTO cDto) throws Exception;
+	
+	public List<ListCartDTO> listCart(int mem_no);
+
+	public List<CartOptionDTO> cartOption(int product_no);
+	
+	public TotalCartDTO totalCart(int mem_no);
+	
+	public void deleteAllCart(int mem_no);
+	
+	public int countCart(int mem_no, int product_no);
+	
+	public int deleteCart(int cart_no);
+	
+	public void modifyCart(CartDTO cDto);
+	
+	public void selectCart(int product_no);
+}

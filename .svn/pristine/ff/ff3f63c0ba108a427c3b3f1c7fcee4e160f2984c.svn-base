@@ -1,0 +1,129 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!doctype html>
+<html lang="ko">
+
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <title>AwesomeJump - insertProduct</title>
+  
+  <link rel="icon" href="/resources/awesomejump/img/favicon.png">
+  <link rel="stylesheet" href="/resources/awesomejump/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/animate.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/nice-select.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/all.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/flaticon.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/themify-icons.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/magnific-popup.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/slick.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/price_rangs.css">
+  <!-- style CSS -->
+  <link rel="stylesheet" href="/resources/awesomejump/css/style.css">
+
+  <script defer src="/resources/awesomejump/js/jquery-1.12.1.min.js"></script>
+  <script defer src="/resources/awesomejump/js/popper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/bootstrap.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.magnific-popup.js"></script>
+  <script defer src="/resources/awesomejump/js/swiper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/masonry.pkgd.js"></script>
+  <script defer src="/resources/awesomejump/js/owl.carousel.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.nice-select.min.js"></script>
+  <script defer src="/resources/awesomejump/js/slick.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.counterup.min.js"></script>
+  <script defer src="/resources/awesomejump/js/waypoints.min.js"></script>
+  <script defer src="/resources/awesomejump/js/contact.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.ajaxchimp.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.form.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.validate.min.js"></script>
+  <script defer src="/resources/awesomejump/js/mail-script.js"></script>
+  <script defer src="/resources/awesomejump/js/stellar.js"></script>
+  <script defer src="/resources/awesomejump/js/price_rangs.js"></script>
+  <!-- custom js -->
+  <script defer src="/resources/awesomejump/js/custom.js"></script>
+</head>
+<script type="text/javascript">
+
+	function formSubmit() {
+		var params = jQuery("#product").serialize();
+		jQuery.ajax({
+			url: '/insertProduct',
+			type: 'POST',
+			data: params,
+			contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+			dataType: 'html',
+			success: function(result){
+				if(result){
+					alert("등록 성공");
+					// 상품 등록 완료 시 화면 category로 이동
+					window.location.href="/category";
+				} else {
+					alert("등록 실패");
+					window.location.href="/insertProduct";
+				}
+			}
+		});
+	}
+</script>
+<body>
+  <jsp:include page="/WEB-INF/templates/awesomejump/header.jsp"/>
+   <section class="breadcrumb breadcrumb_bg">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="breadcrumb_iner">
+            <div class="breadcrumb_iner_item">
+              <h2>상품등록</h2>
+              <p>
+                admin <span>-</span>상품등록
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="cart_area padding_top">
+  	<form id="product" action="/insertProduct" method="post">
+  		<s:csrfInput/>
+	  	<div>상품명 : <input type="text" name="product_name"></div><br>
+	  	<div>상품가격 : <input type="text" name="product_price"></div><br>
+	  	<div>상품설명 : <input type="text" name="product_content"></div><br>
+	  	<div>상품재고 : <input type="text" name="product_stock"></div><br>
+	  	<div>상품재질 : <input type="text" name="product_texture"></div><br>
+	  	<div>포인트 : <input type="text" name="product_point"></div><br>
+	   	<div>상품 색상 : <input type="text" name="product_option_color"></div><br>
+	   	<div>상품 사이즈 : <input type="text" name="product_option_size"></div><br>
+	  	
+			 <select name="category_main" >
+			 	<option value="">전체</option>
+					<c:forEach items="${categoryList}" var="categoryList">
+				   <option value="{categoryList.selectCategoryBig}">${categoryList.category_main} </option>
+			  	</c:forEach>
+		 	 </select>
+		 	 <select name="language" >
+					<c:forEach items="${categoryList}" var="categoryList">
+				    <option value="{categoryList.category_mid}">${categoryList.category_mid} </option>
+			  	</c:forEach>
+	  	 </select>
+		   <select>
+					<c:forEach items="${categoryList}" var="categoryList">
+				   <option value="{categoryDTO.selectCategoryBig}">${categoryDTO.category_sub} </option>
+			  	</c:forEach>
+			 </select>
+			 
+	   </form>
+	  	<button type="button" onclick="formSubmit()">등록</button>
+	  	<button type="reset" >취소</button>
+
+	</section>
+
+  <jsp:include page="/WEB-INF/templates/awesomejump/footer.jsp"/>
+
+</body>
+</html>

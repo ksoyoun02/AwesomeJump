@@ -1,0 +1,172 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <title>AwesomeJump - feature</title>
+  
+  <link rel="icon" href="/resources/awesomejump/img/favicon.png">
+  <link rel="stylesheet" href="/resources/awesomejump/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/animate.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/all.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/flaticon.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/themify-icons.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/magnific-popup.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/slick.css">
+  <!-- style CSS -->
+  <link rel="stylesheet" href="/resources/awesomejump/css/style.css">
+
+  <script defer src="/resources/awesomejump/js/jquery-1.12.1.min.js"></script>
+  <script defer src="/resources/awesomejump/js/popper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/bootstrap.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.magnific-popup.js"></script>
+  <script defer src="/resources/awesomejump/js/swiper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/masonry.pkgd.js"></script>
+  <script defer src="/resources/awesomejump/js/owl.carousel.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.nice-select.min.js"></script>
+  <script defer src="/resources/awesomejump/js/slick.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.counterup.min.js"></script>
+  <script defer src="/resources/awesomejump/js/waypoints.min.js"></script>
+  <script defer src="/resources/awesomejump/js/contact.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.ajaxchimp.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.form.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.validate.min.js"></script>
+  <script defer src="/resources/awesomejump/js/mail-script.js"></script>
+  <!-- custom js -->
+  <script defer src="/resources/awesomejump/js/custom.js"></script>
+  <!-- memberBar -->
+  <%@ include file="/WEB-INF/templates/awesomejump/membersNavbar.jsp" %>
+  <link rel="stylesheet" href="/resources/awesomejump/css/swiper.min.css">
+  <script src="/resources/awesomejump/js/swiper.min.js"></script>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript">
+  function deleteCookie(pno) {
+	  var date = new Date();
+      date.setDate(date.getDate() - 1);
+
+      var Cookie = "";
+      Cookie += "recent"+pno+"=;";
+      Cookie += "Expires=" + date.toUTCString();
+
+      // 쿠키를 집어넣는다.
+      document.cookie = Cookie;
+      
+      alert("선택 상품이 삭제되었습니다");
+      location.reload();
+  }
+
+  </script>
+  <script type="text/javascript">
+  
+  function allCheck(){
+	  var chk = $("#allCheck").prop("checked");
+	  if(chk) {
+	   $(".chBox").prop("checked", true);
+	  } else {
+	   $(".chBox").prop("checked", false);
+	  }
+  }
+
+  function selectDelete() {
+	var checkArr = [];
+	
+	$("input[class='chBox']:checked").each(function(){
+		checkArr.push($(this).attr("data-cartNum"));
+		//alert(checkArr);
+		for(var i = 0 ; i<checkArr.length; i++){
+			var date = new Date();
+		      date.setDate(date.getDate() - 1);
+
+		      var Cookie = "";
+		      Cookie += "recent"+checkArr[i]+"=;";
+		      Cookie += "Expires=" + date.toUTCString();
+
+		      // 쿠키를 집어넣는다.
+		      document.cookie = Cookie;
+		}
+	});
+	 alert("선택 상품이 삭제되었습니다");
+     location.reload();
+}
+  </script>
+  <style>
+    body {
+      min-height: 1000px;
+    }  
+  </style>
+ 
+</head>
+<body>
+  
+  <jsp:include page="/WEB-INF/templates/awesomejump/header.jsp"/>
+
+  <div class="container">
+    <div>
+    </div>
+    <section class="cart_area padding_top">
+    <div class="container">
+      <div class="cart_inner">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+              	<th><input type="checkbox" name="allCheck" id="allCheck" class="allCheck" onclick="allCheck();"></th> 
+                <th scope="col">상품명</th>
+                <th scope="col">적립금</th>
+                <th scope="col">가격</th>
+                <th scope="col">담기<th>
+              </tr>
+            </thead>
+            <c:forEach items="${recentView}" var="recent" >
+	            <tbody>
+	              <tr>
+	              	<td>
+	              		<input type="checkbox" name="chBox" id="chBox" class="chBox" data-cartNum="${recent.product_no}"/>
+	              		<script>
+							 $(".chBox").click(function(){
+							  $("#allCheck").prop("checked", false);
+							 });
+						</script>
+	              	</td>
+	                <td>
+	                  <div class="media">
+	                    <div class="d-flex">
+	                      <img src="/resources/awesomejump/img/product/single-product/cart-1.jpg" alt="" />
+	                    </div>
+	                    <div class="media-body">
+	                      <p>${recent.product_name}</p>
+	                    </div>
+	                  </div>
+	                </td>
+	                <td>
+	                  <h5>${recent.product_point}</h5>
+	                </td>
+	                <td>
+	                 <h5>${recent.product_price}</h5>
+	                </td>
+	                <td>
+	                	<input type="button" value="삭제" onclick="deleteCookie(${recent.product_no});"> 
+	                </td>
+	              </tr>
+            </c:forEach>
+	        </tbody>
+          </table>
+      	<button type="button" class="selectDelete_btn" onclick="selectDelete();">선택삭제</button>
+          <div class="checkout_btn_inner float-right">
+            <a class="btn_1" href="#">쇼핑 계속하기</a> 
+          </div>
+        </div>
+      </div>
+     </div> 
+  </section>
+  </div>
+
+  <jsp:include page="/WEB-INF/templates/awesomejump/footer.jsp"/>
+
+</body>
+</html>

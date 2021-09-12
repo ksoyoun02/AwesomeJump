@@ -1,0 +1,108 @@
+package shop.awesomejump.controller;
+
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collection;
+import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import shop.awesomejump.config.ProfileResolver;
+import shop.awesomejump.config.RootConfig;
+import shop.awesomejump.config.ServletConfig;
+import shop.awesomejump.domain.CustomAdapter;
+import shop.awesomejump.domain.MemberDTO;
+
+/*****************************************************************************************************************************
+ * 테스트 케이스 실행 전 shop.awesomejump.doc 패키지의 path.properties를 테스트 경로의 동일한 패키지에 넣어야 실행할 수 있어요
+ *****************************************************************************************************************************/
+
+//현재 클래스(AddressCotrollerTest)에서 수행되는 테스트에 권한 부여 (메서드에 개별 적용 가능)
+@WithMockUser(authorities = "ROLE_USER")
+
+@WebAppConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles(resolver = ProfileResolver.class)
+@ContextConfiguration(classes = { RootConfig.class, ServletConfig.class })
+public class AddressCotrollerTest {
+
+	@Autowired
+	private WebApplicationContext context;
+	private MockMvc mockMvc;
+
+	@Autowired
+	private UserDetailsService customUserService;
+	
+    @Before
+    public void before() {
+
+    	/**********************************************************************************************************
+    	 * 컨트롤러가 매개변수로 @AuthenticationPrincipal MemberDTO member를 받아서 가져다 쓰는경우에 필요한 코드 */ 
+    	
+    	// 아이디로 DB에 조회하여(username) 특정 권한 부여 후(role) 로그인
+    	String username = "test@email.com";
+    	String role = "ROLE_USER";
+    	loginUser(username, role);
+    	
+    	/**********************************************************************************************************/
+    	
+    	// mockMvc 설정
+        mockMvc = MockMvcBuilders
+        		.webAppContextSetup(context)
+        		.apply(springSecurity())
+        		.build();
+    }
+
+	private void loginUser(String username, String role) {
+		CustomAdapter userDetails = (CustomAdapter) customUserService.loadUserByUsername(username);
+        MemberDTO member = userDetails.getMember();
+        		
+        SecurityContextHolder.getContext()
+        	.setAuthentication(new UsernamePasswordAuthenticationToken(member, "[Protected]", getSimpleAuthorities(role)));
+	}
+    private Collection<? extends GrantedAuthority> getSimpleAuthorities(String role) {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
+    }
+	
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+	@Test
+	public void address() throws Exception {
+		
+		mockMvc.perform(get("/address"))
+			   .andExpect(status().isOk())
+			   .andDo(print());
+	}
+	
+	@Test
+	public void newAddress() {
+	}
+	
+	@Test
+	public void modifyAddress() {
+	}
+	
+	@Test
+	public void deleteAddress() {
+	}
+	
+}

@@ -1,0 +1,12 @@
+package shop.awesomejump.service;
+
+import java.util.List;
+
+import shop.awesomejump.domain.ProductDTO;
+
+public interface IMemDetailProductDAO {
+
+
+	// 주영 / 회원 상품 상세 정보
+		public ProductDTO memDetail(int product_no) throws Exception;
+}

@@ -1,0 +1,52 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.ProImageDTO;
+import shop.awesomejump.domain.ProInterestDTO;
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.mapper.MemProductMapper;
+import shop.awesomejump.service.IMemDetailProductDAO;
+
+@Repository
+public class memDetailProductDAOImpl implements IMemDetailProductDAO {
+
+	@Autowired
+	private MemProductMapper memproductmapper;
+	
+
+
+	// 주영 / 회원 상품 상세 정보
+	@Override
+	public ProductDTO memDetail(int product_no) throws Exception {
+		return memproductmapper.memDetail(product_no);
+	}
+	
+	// 주영 / 상품담기 버튼 클릭시 회원 장바구니에 등록
+	public int insertProductCart(CartDTO cart) throws Exception{
+		return memproductmapper.insertProductCart(cart);
+	}
+
+	// 주영 / 회원 상품 상세 정보 이미지
+	@Override
+	public List<ProImageDTO> getMemImageList(int product_no) throws Exception {
+		return memproductmapper.getMemImageList(product_no);
+	}
+
+	// 주영 / 관심상품 1개 등록
+	public int interestInsertMember(ProInterestDTO interest) throws Exception{
+		return memproductmapper.interestInsertMember(interest);
+	}
+	
+	// 주영 / 동일한 관심상품 1개 삭제
+	public int interestDeleteMember(ProInterestDTO interest) throws Exception{
+		return memproductmapper.interestDeleteMember(interest);
+	}
+	
+
+	
+}

@@ -1,0 +1,104 @@
+package shop.awesomejump.controller;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import shop.awesomejump.domain.AddressDTO;
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.CartOptionDTO;
+import shop.awesomejump.domain.CheckoutDTO;
+import shop.awesomejump.domain.CouponMemDTO;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.domain.TotalCartDTO;
+import shop.awesomejump.service.IAddressDAO;
+import shop.awesomejump.service.ICartDAO;
+import shop.awesomejump.service.IMemberDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@Controller
+@RequestMapping("/awesomejump/checkout")
+public class OrderController {
+	
+//	@Autowired
+//	private IOrderDAO orderDao;
+//	
+	@Autowired
+	private ICartDAO cartDao;
+	
+	@Autowired
+	private IProductDAO productDao;
+	
+	@Autowired
+	private IMemberDAO memberDao;
+	
+	@Autowired
+	private IAddressDAO addressDao;
+	//주문 상품
+	@PostMapping
+	public String checkout(@AuthenticationPrincipal MemberDTO member, Model model,
+							@RequestParam("cart_no") int[] cart_no
+							
+							) throws Exception {
+
+		System.out.println("cart_no == " +cart_no + "/ cart_amount == ");
+
+		//주문한 상품 정보
+		List<CheckoutDTO> checkoutList = new ArrayList<CheckoutDTO>();
+		
+		for(int i = 0; i< cart_no.length; i++) {
+			int pro_no = cart_no[i];
+			CartDTO cart = cartDao.getCart(pro_no);
+			System.out.println("cart == "+cart);
+			ProductDTO prod = this.productDao.getProduct(cart.getProduct_no());
+			CartOptionDTO option = cartDao.getOption(cart.getProduct_option_no());
+			
+			CheckoutDTO checkout = CheckoutDTO.builder()
+									.cart_no(pro_no)
+									.cart_quantity(cart.getCart_amount())
+									.product_name(prod.getProduct_name())
+									.product_price(prod.getProduct_price())
+									.product_texture(prod.getProduct_texture())
+									.product_option_no(option.getProduct_option_no())
+									.product_option_size(option.getProduct_option_size())
+									.product_option_color(option.getProduct_option_color())
+									.build();
+			checkoutList.add(checkout);
+		}
+		
+		model.addAttribute("checkout", checkoutList);
+		//상품 포인트/총가격
+		TotalCartDTO cDto = cartDao.totalCartByCartList(member.getMem_no(), cart_no);
+		
+		model.addAttribute("totalPrice", cDto.getTotalPrice());
+		model.addAttribute("totalPoint", cDto.getTotalPoint());
+		
+		//주문자 이메일 받아오기
+		MemberDTO mem = memberDao.getEmail(member.getMem_no());		
+		model.addAttribute("email", mem);
+		
+		//회원 주소 받아오기
+		List<AddressDTO> addr = addressDao.selectAddressList(member.getMem_no());		
+		model.addAttribute("addressList", addr);
+		
+		//회원의 포인트 받아오기
+		int point = memberDao.selPoint(member.getMem_no());		
+		model.addAttribute("point", point);
+		
+		//회원의 쿠폰 받아오기
+		List<CouponMemDTO> cpDto = memberDao.orderCoupon(member.getMem_no());
+		
+		model.addAttribute("coupon", cpDto);
+		
+		return "/awesomejump/checkout";
+	}
+}

@@ -1,0 +1,61 @@
+package shop.awesomejump.controller;
+
+// TODO: 상품 이미지 기능 추가되면
+
+import java.util.List;
+
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.domain.MemberOrderDetailDTO;
+import shop.awesomejump.domain.OrderInfoDTO;
+import shop.awesomejump.domain.ProImageDTO;
+import shop.awesomejump.service.IOrderDAO;
+import shop.awesomejump.service.IProductDAO;
+
+@Slf4j
+@Controller
+@Secured("ROLE_USER")
+@RequestMapping("/orders")
+@RequiredArgsConstructor
+public class MemberOrdersController {
+	
+	private final IOrderDAO orderService;
+	private final IProductDAO productService;
+	
+	@GetMapping
+	public String orders(@AuthenticationPrincipal MemberDTO member, Model model) {
+
+		List<OrderInfoDTO> orderInfoList = orderService.selectOrderInfoList(member.getMem_no());
+		
+		orderInfoList.forEach(orderInfo -> {
+			List<MemberOrderDetailDTO> orderDetailList = 
+					orderService.selectMemberOrderDetailList(orderInfo.getOrder_info_uid());
+			
+			orderDetailList.forEach(orderDetail -> {
+				
+				ProImageDTO productImage = new ProImageDTO();
+				try {
+					productImage = productService.getImageList(orderDetail.getProduct_no()).get(0);
+				} catch (Exception e) { e.printStackTrace();}
+				
+				String imagePath = productImage.getPro_image_path() + "/s_"
+								 + productImage.getPro_image_uuid() + "_"
+								 + productImage.getPro_image_name();
+				orderDetail.setImagePath(imagePath);
+			});
+			
+			orderInfo.setOrderDetailList(orderDetailList);
+		});
+
+		model.addAttribute("orderInfoList", orderInfoList);
+		return "awesomejump/orders";
+	}
+}

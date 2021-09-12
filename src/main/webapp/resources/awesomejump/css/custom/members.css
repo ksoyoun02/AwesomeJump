@@ -1,0 +1,29 @@
+.btn-modify {
+  width: 80px !important;  
+}
+
+.nickcheck-result {
+  min-height: 30px;
+  line-height: 30px;
+}
+
+.members-button {
+  background-color: #ff3368;
+  color: #fff;
+  border-radius: 5px;
+  line-height: 20px;
+  border: 2px solid #ff3368;
+}
+
+@media screen and (max-width: 768px) {
+  .members-button {
+    width: 90%;
+    margin: 10px;
+  }
+  .form-control {
+    width: 90%;
+  }
+  .btn-modify {
+    margin: 0;
+  }
+}

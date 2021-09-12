@@ -1,0 +1,83 @@
+package shop.awesomejump.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import shop.awesomejump.domain.CategoryDTO;
+import shop.awesomejump.service.ICategoryDAO;
+
+@Controller
+public class CategoryController {
+
+	
+	private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
+	
+	@Autowired
+	private ICategoryDAO categoryDao;
+
+	@GetMapping("/category")
+	public String categoryList(Model model) throws Exception {
+
+		List<CategoryDTO> cDto = categoryDao.selectCategoryBig();
+
+		System.out.println("CategoryDAOImpl CategoryDTO ==> " + cDto.toString());
+		model.addAttribute("categoryList", cDto);
+
+
+		return "/awesomejump/category";
+	}
+	
+	@PostMapping("/category_mid")
+	@ResponseBody
+	public ResponseEntity<List<CategoryDTO>> category_mid(@RequestBody String select) throws Exception {
+		ResponseEntity<List<CategoryDTO>> entity = null;
+		
+		try {
+			List<CategoryDTO> list = categoryDao.selectCategoryBigMiddle(select);
+			
+			logger.info("category_mid ==> " + list);
+			
+			entity = new ResponseEntity<List<CategoryDTO>>(list, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			/* entity = new ResponseEntity<String>(HttpStatus.BAD_REQUESTD); */
+		}
+		return entity;
+	}
+
+	@PostMapping("/category_sub")
+	@ResponseBody
+	public ResponseEntity<List<CategoryDTO>> category_sub(@RequestBody String mainCategory, @RequestBody String midCategory) throws Exception {
+		ResponseEntity<List<CategoryDTO>> entity = null;
+		
+		Map<String, String> map = new HashMap<>();
+		map.put("mainCategory", mainCategory);
+		map.put("midCategory", midCategory);
+		
+		try {
+			List<CategoryDTO> list = categoryDao.selectCategoryBigMiddleSmall(map);
+			
+			logger.info("category_mid ==> " + list);
+			
+			entity = new ResponseEntity<List<CategoryDTO>>(list, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			/* entity = new ResponseEntity<String>(HttpStatus.BAD_REQUESTD); */
+		}
+		return entity;
+	}
+
+}

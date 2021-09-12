@@ -1,0 +1,88 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.ProImageDTO;
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.domain.ProductOptionDTO;
+import shop.awesomejump.mapper.ProductMapper;
+import shop.awesomejump.service.IProductDAO;
+
+@Repository
+public class ProductDAOImpl implements IProductDAO {
+
+	@Autowired
+	private ProductMapper productMapper;
+
+	private static final Logger logger = LoggerFactory.getLogger(ProductDAOImpl.class);
+	// 상품 등록
+	@Override
+	public void insertProduct(ProductDTO pDto) throws Exception {
+		logger.info("ㄹㅇ나ㅣㅁ라인ㅁㄹㅇㄴㅁ");
+		productMapper.insertProduct(pDto);
+
+		if (pDto.getImageList() == null || pDto.getImageList().size() <= 0) {
+			logger.info("ㄹㄴ이마린아믿다릳자미라이마ㅣ ----> ");
+			return;
+		}
+
+		pDto.getImageList().forEach(attach -> {
+			
+			attach.setProduct_no(pDto.getProduct_no());
+			try {
+				productMapper.insertProductImage(attach);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		});
+
+	}
+
+	// 상품 목록
+	@Override
+	public List<ProductDTO> listProduct() throws Exception {
+		return productMapper.listProduct();
+	}
+
+	// 상품 상세 정보
+	@Override
+	public ProductDTO detailProduct(int product_no) throws Exception {
+		return productMapper.detailProduct(product_no);
+	}
+
+	@Override
+	public int modifyProduct(ProductDTO pDto) throws Exception {
+		return productMapper.modifyProduct(pDto);
+	}
+
+	@Override
+	public int deleteProduct(int product_no) throws Exception {
+		return productMapper.deleteProduct(product_no);
+	}
+
+	// 상품 이미지 등록
+	@Override
+	public int insertProductImage(ProImageDTO piDto) throws Exception {
+		return productMapper.insertProductImage(piDto);
+	}
+	
+	// 상품 이미지 출력
+	@Override
+	public List<ProImageDTO> getImageList(int product_no) throws Exception {
+		return productMapper.getImageList(product_no);
+	}
+
+	@Override
+	// 주영 / 상품에 해당하는 옵션 출력
+	public List<ProductOptionDTO> selectProductOption(int product_no) throws Exception {
+		return productMapper.selectProductOption(product_no);
+	}
+
+
+}

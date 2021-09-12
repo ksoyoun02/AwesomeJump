@@ -1,0 +1,139 @@
+package shop.awesomejump.controller;
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import shop.awesomejump.domain.CartDTO;
+import shop.awesomejump.domain.CartOptionDTO;
+import shop.awesomejump.domain.ListCartDTO;
+import shop.awesomejump.domain.MemberDTO;
+import shop.awesomejump.domain.TotalCartDTO;
+import shop.awesomejump.service.ICartDAO;
+
+
+@Controller
+@RequestMapping("/awesomejump/cart")
+public class CartController {
+	
+	@Autowired
+	private ICartDAO cartDao;
+		
+	private Logger log = LoggerFactory.getLogger(CartController.class);
+	//장바구니 추가
+	@RequestMapping("/insert")
+	public String insertCart(CartDTO cDto, @AuthenticationPrincipal MemberDTO member, Model model)throws Exception{
+		//장바구니에 기존 상품이 있는지 검사
+		int count = cartDao.countCart(member.getMem_no(), cDto.getProduct_no());
+//		count = (count > 0) ? int 반환1 : int 반환2;
+//		count = (count > 0) ? cartDao.modifyCart(cDto) : cartDao.insertCart(cDto);
+		if (count == 0) {
+			//상품이 없으면 insert
+			cartDao.insertCart(cDto);
+		} else {
+			// 상품이 있으면 update
+			cartDao.updateCart(cDto);
+		}
+		
+		
+		return "redirect:/awesomejump/cart/list";
+	}
+	@RequestMapping("/list")
+	public String listCart(Model model, @AuthenticationPrincipal MemberDTO member) throws Exception{
+	
+	      //회원 장바구니 목록 가져오기
+	      log.info("회원 member : " + member.getMem_no());
+	      List<ListCartDTO> list = cartDao.listCart(member.getMem_no());
+	      log.info("list : " + list);
+	      
+	      //리스트(i)번째 상품의 상품번호
+	      list.get(0).getProduct_no();
+	      
+	      List<CartOptionDTO> optionList = new ArrayList<CartOptionDTO>();
+	      for(ListCartDTO cart: list ){
+	    	  optionList = cartDao.cartOption(cart.getProduct_no());
+	    	  cart.setOption(optionList);  
+	      }
+	      log.info("optionList :"+optionList);
+	      //상품 옵션 목록 가져오기
+//	      List<CartOptionDTO> option = new ArrayList<>();
+//	      for (int i =0; i<list.size(); i++) {
+//	            //장바구니 상품 리스트 개수
+//	         option = cartDao.cartOption(list.get(i).getProduct_no()); 
+//	         log.info("option"+i +" ==> "+ option);
+//      
+//	      }
+		// 장바구니 총액, 총 포인트 구하기
+		TotalCartDTO cDto = cartDao.totalCart(member.getMem_no());
+	
+		model.addAttribute("member", member);
+		model.addAttribute("listCart", list);
+		
+		log.info("listCart : " + list);
+		
+		if (cDto != null) {
+			
+			model.addAttribute("totalPrice",cDto.getTotalPrice());
+			model.addAttribute("totalPoint", cDto.getTotalPoint());
+		}				
+		return "/awesomejump/cart/list";
+	}
+	
+	//장바구니 비우기
+	@RequestMapping("/deleteAll")
+	public String deleteAll(@AuthenticationPrincipal MemberDTO member) {
+		cartDao.deleteAllCart(member.getMem_no());				
+		return "redirect:/awesomejump/cart/list";
+	}
+	
+	//장바구니 부분삭제
+	
+	@RequestMapping("/delete")
+	public String delete(@RequestParam(defaultValue = "0") int cart_no) {
+		log.info("cart_no "+cart_no);
+		
+		if (cart_no == 0) {
+			return "redirect:index";
+		}
+		
+		cartDao.deleteCart(cart_no);
+		
+		return "redirect:/awesomejump/cart/list";
+	}
+	
+	//장바구니 수정
+	@PostMapping("/update")
+	public String modifyCart(CartDTO cDto,
+							 @AuthenticationPrincipal MemberDTO member) {
+		
+		cartDao.modifyCart(cDto);		
+//		log.info("cDto "+cDto);
+//		
+//		int amount = cDto.getCart_amount();
+//		int cart_no = cDto.getCart_no();
+//		
+//		if(amount == 0) {
+//			//삭제 처리
+//			cartDao.deleteCart(cart_no);
+//		}else if(amount > 0) {
+//			//수량 수정 처리
+//			cartDao.modifyCart(cDto);
+//		}else {
+//			//수량이 음수일 경우
+//			log.info("수량이 음수이다");
+//		}
+		return "redirect:/awesomejump/cart/list";
+	}
+	
+}

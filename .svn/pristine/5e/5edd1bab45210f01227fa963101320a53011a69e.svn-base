@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.OrderMapper">
+	
+	<select id="selectOrderInfoList" resultType="shop.awesomejump.domain.OrderInfoDTO">
+		SELECT *
+		FROM order_info
+		WHERE mem_no = #{mem_no}
+	</select>
+	
+	<select id="selectMemberOrderDetailList" resultType="shop.awesomejump.domain.MemberOrderDetailDTO">
+		SELECT o.*, 
+		       p.product_name, p.product_price, 
+		       po.product_option_color, po.product_option_size
+		  FROM order_detail o, 
+		  	   product p, 
+		  	   product_option po
+		 WHERE o.order_info_uid = #{order_info_uid}
+		   AND po.product_option_no = o.product_option_no
+		   AND o.product_no = p.product_no
+	</select>
+	
+</mapper>

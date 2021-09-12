@@ -1,0 +1,10 @@
+package shop.awesomejump.mapper;
+
+import shop.awesomejump.domain.ProductOptionDTO;
+
+public interface OptionMapper {
+
+	public int insertOption(ProductOptionDTO optionDto);
+	public String selectOption(ProductOptionDTO optionDto);
+	
+}

@@ -1,0 +1,49 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.CategoryDTO;
+import shop.awesomejump.mapper.CategoryMapper;
+import shop.awesomejump.service.ICategoryDAO;
+
+@Repository
+public class CategoryDAOImpl implements ICategoryDAO{
+	
+	@Autowired
+	private CategoryMapper categoryMapper;
+
+	@Override
+	public List<CategoryDTO> selectCategoryBig() {
+		
+		List<CategoryDTO> cDto = categoryMapper.selectCategoryBig();
+		
+		System.out.println("CategoryDAOImpl CategoryDTO ==> " + cDto);
+		
+		return cDto;
+	}
+	
+	@Override
+	public List<CategoryDTO> selectCategoryBigMiddle(String select) {
+		
+		List<CategoryDTO> cDto = categoryMapper.selectCategoryBigMiddle(select);
+		
+		System.out.println("CategoryDAOImpl CategoryDTO ==> " + cDto);
+		
+		return cDto;
+	}
+	
+	@Override
+	public List<CategoryDTO> selectCategoryBigMiddleSmall(Map<String, String> map) {
+		
+		List<CategoryDTO> cDto = categoryMapper.selectCategoryBigMiddleSmall(map);
+		
+		System.out.println("CategoryDAOImpl CategoryDTO ==> " + cDto);
+		
+		return cDto;
+	}
+
+}

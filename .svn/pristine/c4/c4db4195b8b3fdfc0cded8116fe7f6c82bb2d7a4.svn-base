@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.MemProductMapper">
+
+
+<!-- 주영 / 상세상품 진입 전 product_no 비교 -->
+<select id="memDetail" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+SELECT *
+FROM product
+WHERE product_no=#{product_no}
+</select>
+
+
+<!-- 주영 / 상세상품 페이지 내의 뿌려질 데이터들 -->
+<select id="memDetailProduct" resultType="shop.awesomejump.domain.ProductDTO">
+SELECT product_name,
+        p.product_interest_yn,
+        p.product_stock,
+        p.product_content,
+        p.product_point,
+        p.product_review,
+        p.product_texture,
+        p.product_thumb_img,
+        p.product_grade,
+        p.product_price,
+        product_option_size,
+       product_option_color,
+       p.cateogry_mid
+FROM  product p, product_option o
+WHERE o.product_no = #{o.product_no} AND p.product_no = #{p.product_no}
+</select>	
+
+<!-- 주영 / 상품담기 버튼 클릭시 회원 장바구니에 등록 -->
+<insert id="insertProductCart" parameterType="shop.awesomejump.domain.CartDTO">
+	INSERT INTO cart(cart_no, mem_no, cart_amount, product_no ,product_option_no)
+	VALUES(cart_seq.nextval,#{mem_no}, #{cart_amount}, #{product_no} ,#{product_option_no})
+</insert>
+
+ <!-- 주영 / 상품 이미지 출력 -->
+ <select id="getMemImageList" resultType="shop.awesomejump.domain.ProImageDTO">
+ 	SELECT *
+ 	FROM pro_image
+ 	WHERE product_no = #{product_no}
+ </select>
+  
+    
+    <!-- 주영 / 여러상품 이미지 출력-->
+ <select id="getAllMemImageList" resultType="shop.awesomejump.domain.ProImageDTO" parameterType="int">
+ 	SELECT  *
+ 	FROM pro_image
+ 	WHERE product_no IN 
+ 	<foreach item="item" index="index" collection="list"
+		open="(" separator="," close=")">
+		#{item} 	
+ 	</foreach>
+ 	ORDER BY product_no, pro_image_no	
+ </select>
+ 
+  
+<!-- 주영 / 관심상품 1개 등록 -->  
+<insert id="interestInsertMember" parameterType="shop.awesomejump.domain.ProInterestDTO">
+	INSERT INTO pro_interest(pro_interest_no, mem_no, product_no)
+	VALUES(PRO_INTEREST_SEQ.nextval, #{mem_no}, #{product_no} )
+</insert>
+
+<delete id="interestDeleteMember" parameterType="shop.awesomejump.domain.ProInterestDTO">
+	DELETE FROM pro_interest
+	WHERE mem_no = #{mem_no} AND product_no = #{product_no}
+</delete>
+
+<!-- 주영 / 해당 상품에 관한 별점 / 리뷰 수 -->
+<select id="avgReviewGrade" parameterType="int" resultType="string">
+	SELECT AVG(review_grade)
+	FROM review
+	WHERE product_no = #{product_no}
+</select>
+
+<!-- 주영 / 해당 상품에 관한 리뷰 수 -->
+<select id="cntReviewGrade" parameterType="int" resultType="int">
+	SELECT count(review_grade)
+	FROM review
+	WHERE product_no = #{product_no}
+</select>
+
+  <!-- 주영/ 상품이 등록된 총 갯수 -->
+  <select id="selectAllCountProduct" resultType="int">
+ 	SELECT count(*)
+	FROM product
+  </select>
+  
+  <!-- 추천상품 -->
+<select id="selectRecommendProduct" resultType="shop.awesomejump.domain.ProductDTO" parameterType="int">
+	SELECT *
+	FROM product
+	WHERE category_mid = #{category_mid}
+</select>  
+
+ <!-- 주영 / (상세페이지) 리뷰 목록 이미지 출력-->
+ <select id="selectProductAllReviewImageList" resultType="shop.awesomejump.domain.ReviewImageDTO" parameterType="int">
+ 	SELECT  *
+ 	FROM review_image
+ 	WHERE review_no IN 
+ 	<foreach item="review_no" index="index" collection="list"
+		open="(" separator="," close=")">
+		#{review_no}
+ 	</foreach>
+ 	ORDER BY review_no, review_image_no
+ </select>
+
+	<select id="countIfOptionExistsOnProduct" resultType="int" parameterType="map">
+	SELECT 	count(*)
+	FROM 	product_option
+	WHERE 	product_no = #{product_no}
+			AND product_option_no = #{product_option_no}
+	</select>
+</mapper>

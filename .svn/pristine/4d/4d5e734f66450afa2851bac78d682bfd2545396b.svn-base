@@ -1,0 +1,39 @@
+package shop.awesomejump.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import shop.awesomejump.domain.CategoryDTO;
+import shop.awesomejump.service.ICategoryDAO;
+
+@Controller
+public class MemCategoryController {
+
+	 @Inject 
+	 private ICategoryDAO categoryDao;
+      /*
+       * @GetMapping("/category") public String categoryList(Model model) {
+       * 
+       * return "/awesomejump/category"; }
+       */
+    
+
+   @GetMapping("/category")
+   public String categoryProductList(Model model) throws Exception {
+       List<CategoryDTO> category = null;
+         category = categoryDao.category();
+       
+       model.addAttribute("category", category);
+       System.out.println(category);
+       return "/awesomejump/category";
+   }
+ 
+   
+   
+   
+}

@@ -1,0 +1,5 @@
+package shop.awesomejump.service.impl;
+
+public class OrderDAOImpl {
+
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.MyReviewMapper">
+
+	<select id="selectMyReviewList" resultType="shop.awesomejump.domain.MyReviewVO">
+		SELECT x.productImagePath, x.product_name, x.review_content, x.review_grade, x.review_date
+		  FROM (SELECT ROW_NUMBER() OVER(PARTITION BY r.review_no ORDER BY r.review_no) as RNUM,
+		               r.review_no, p.product_name, r.review_content, r.review_grade, r.review_date, 
+		               pi.pro_image_path || '/s_' || pi.pro_image_UUID || '_' || pi.pro_image_name as productImagePath
+		          FROM product p, pro_image pi, review r
+		         WHERE mem_no = #{mem_no}
+		           AND r.product_no = p.product_no
+		           AND r.product_no = pi.product_no) x
+		 WHERE x.RNUM = 1
+	</select>
+
+</mapper>

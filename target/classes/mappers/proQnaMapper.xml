@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.ProQnaMapper">
+	<insert id="insert">
+		INSERT INTO pro_qna (pro_qna_no, pro_qna_ref, product_no, mem_no, pro_qna_category, pro_qna_title, pro_qna_content, pro_qna_name, pro_qna_pw)
+		VALUES (pro_qna_seq.nextval, pro_qna_seq.currval, #{product_no}, #{mem_no}, #{pro_qna_category}, #{pro_qna_title}, #{pro_qna_content}, #{pro_qna_name}, #{pro_qna_pw, jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertReply" >
+		INSERT INTO pro_qna (pro_qna_no, product_no, pro_qna_ref, mem_no, pro_qna_category, pro_qna_title, pro_qna_content, pro_qna_name, pro_qna_relevel)
+		VALUES (pro_qna_seq.NEXTVAL, #{product_no}, #{pro_qna_no}, #{mem_no}, #{pro_qna_category}, #{pro_qna_title}, #{pro_qna_content}, #{pro_qna_name}, #{pro_qna_relevel} + 1)
+	</insert>
+	
+	<update id="updateReplyYN">
+		UPDATE pro_qna
+		SET pro_qna_reply_yn=REPLACE(pro_qna_reply_yn, 'n', 'y')
+		WHERE pro_qna_ref = #{pro_qna_ref}
+	</update> 
+	
+	<select id="readReply" resultType="shop.awesomejump.domain.ProductQnaDTO">
+		SELECT *
+		FROM pro_qna
+		WHERE pro_qna_no = #{pro_qna_no}
+	</select>
+	
+	<delete id="deleteReply">
+		DELETE FROM pro_qna
+		WHERE pro_qna_no = #{pro_qna_no}
+	</delete>
+	
+	<update id="updateReply">
+		UPDATE pro_qna
+		SET pro_qna_category = #{pro_qna_category},
+			pro_qna_title = #{pro_qna_title},
+			pro_qna_content = #{pro_qna_content},
+			pro_qna_date = sysdate
+		WHERE pro_qna_no = #{pro_qna_no}
+	</update>
+	
+	<select id="read" resultType="shop.awesomejump.domain.ProductQnaDTO">
+		SELECT * 
+		FROM pro_qna
+		WHERE pro_qna_no = #{pro_qna_no}
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM pro_qna
+		WHERE pro_qna_no = #{pro_qna_no}
+	</delete>
+	
+	<update id="update">
+		UPDATE pro_qna
+		SET pro_qna_title = #{pro_qna_title}, pro_qna_content = #{pro_qna_content}
+		WHERE pro_qna_no = #{pro_qna_no}
+	</update>
+	
+	<select id="getListWithPaging" resultType="shop.awesomejump.domain.ProductQnaDTO">
+		SELECT pro_qna_no, pro_qna_category, pro_qna_title, pro_qna_content, pro_qna_name, pro_qna_date
+		FROM pro_qna
+		WHERE product_no = #{product_no}
+		ORDER BY pro_qna_ref DESC, pro_qna_relevel ASC, pro_qna_no DESC
+	</select>
+	
+	<select id="getListReply" resultType="shop.awesomejump.domain.ProductQnaDTO">
+		<![CDATA[
+			SELECT * 
+			FROM pro_qna 
+			WHERE pro_qna_no > 0
+		]]>
+	</select>
+	
+</mapper>

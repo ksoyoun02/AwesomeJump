@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.ReviewMapper">
+	
+	<insert id="insertReview">
+		INSERT INTO review
+		VALUES(review_seq.NEXTVAL, #{product_no}, #{mem_no}, #{order_detail_no}, 
+		       #{review_grade}, #{review_content}, #{review_name}, SYSDATE, 0, 0)
+		<selectKey resultType="int" keyProperty="review_no" order="AFTER">
+       		SELECT review_seq.CURRVAL FROM DUAL
+    	</selectKey>   
+	</insert>
+
+	<insert id="insertReviewImage">
+		INSERT INTO review_image
+		VALUES(#{review_no}, #{review_image_path}, #{review_image_name}, 
+			   #{review_image_type}, review_image_seq.NEXTVAL)
+	</insert>
+	
+</mapper>

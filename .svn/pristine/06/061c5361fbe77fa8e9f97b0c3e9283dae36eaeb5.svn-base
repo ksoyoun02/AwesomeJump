@@ -1,0 +1,11 @@
+.register_logo img{
+	width: 80px;
+	margin: 0 7px;
+	float: left;
+}
+
+.register_logo {
+  width: fit-content;
+  text-align: center;
+  margin: auto;
+}

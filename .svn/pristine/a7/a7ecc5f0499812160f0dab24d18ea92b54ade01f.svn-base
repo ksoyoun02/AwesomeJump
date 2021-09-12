@@ -1,0 +1,48 @@
+package shop.awesomejump.service.impl;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Repository;
+
+import shop.awesomejump.domain.ProductDTO;
+import shop.awesomejump.mapper.CategoryProductMapper;
+import shop.awesomejump.service.ICategoryProductDAO;
+
+@Repository
+public class CategoryProductDAOImpl implements ICategoryProductDAO {
+
+	@Inject
+	private CategoryProductMapper categoryproductMapper;
+
+
+	// 주영 / 상품 전체 출력
+	@Override
+	public List<ProductDTO> categoryAndProduct() throws Exception {
+		List<ProductDTO> list = categoryproductMapper.categoryAndProduct();
+		System.out.println("categoryAndProduct     "+list);
+		return list;
+	}
+	
+	
+	// 주영 / 대분류에 해당하는 상품 전체 출력
+	@Override
+	public List<ProductDTO> categoryMainProduct(int category_main) throws Exception{
+		return categoryproductMapper.categoryMainProduct(category_main);
+	}
+
+	// 주영 / 중분류에 해당하는 상품 전체 출력
+	@Override
+	public List<ProductDTO> categoryMidProduct(int category_mid) throws Exception{
+		return categoryproductMapper.categoryMidProduct(category_mid);
+	}
+
+	// 주영 / 소분류에 해당하는 상품 전체 출력
+	@Override
+	public List<ProductDTO> categorySubProduct(int category_sub) throws Exception{
+		return categoryproductMapper.categorySubProduct(category_sub);
+	}
+
+
+}

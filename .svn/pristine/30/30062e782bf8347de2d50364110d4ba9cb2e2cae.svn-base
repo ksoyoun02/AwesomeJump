@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.MemberMapper">
+
+	<select id="selectMemberByEmail" resultType="shop.awesomejump.domain.MemberDTO">
+		SELECT *
+		FROM member
+		WHERE mem_email = #{mem_email}
+	</select>
+  
+  	<insert id="insertMember" parameterType="shop.awesomejump.domain.MemberDTO">
+	 	INSERT INTO member(MEM_NO, MEM_PW, MEM_NICKNAME, MEM_EMAIL,MEM_REGISTER_PATH,MEM_EMAIL_YN)
+	 	VALUES (mem_seq.nextval, #{mem_pw}, #{mem_nickname}, #{mem_email}, #{mem_register_path}, #{mem_email_yn})
+	</insert>
+	
+	<select id="confirmEmail" resultType="shop.awesomejump.domain.MemberDTO">
+		SELECT *
+		FROM member
+		WHERE mem_email = #{userEmail}
+	</select>
+	
+	<select id="confirmNickname" resultType="shop.awesomejump.domain.MemberDTO">
+		SELECT *
+		FROM member
+		WHERE mem_nickname = #{userNickName}
+	</select>
+	
+	<update id="updateCode" parameterType="shop.awesomejump.domain.MemberDTO">
+		UPDATE member
+		SET MEM_EMAIL_YN = #{mem_email_yn}
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<update id="updateLastLogin" parameterType="shop.awesomejump.domain.MemberDTO">
+		UPDATE member
+		SET MEM_LAST_LOGIN = sysdate
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<select id="recentView" resultType="shop.awesomejump.domain.ProductDTO">
+		SELECT *
+		FROM product
+		WHERE PRODUCT_NO = #{product_no}
+	</select>
+	
+	<select id="interest" resultType="shop.awesomejump.domain.ProductDTO">
+		select p.PRODUCT_NO,p.PRODUCT_GRADE,p.PRODUCT_NAME,p.PRODUCT_PRICE
+		from product p,
+    		pro_interest i
+		where i.mem_no = #{mem_no}
+		and p.product_no = i.product_no
+	</select>
+	
+	<select id="interestWithPaging" resultType="shop.awesomejump.domain.ProductDTO">
+	<![CDATA[
+		 select product_no, product_grade, product_name, product_price
+		  from (select rownum rn, p.PRODUCT_NO, p.PRODUCT_GRADE, p.PRODUCT_NAME, p.PRODUCT_PRICE
+                from  product p,
+                      pro_interest i
+                where i.mem_no = #{mem_no}
+                and p.product_no = i.product_no
+                and rownum <=#{criteria.pageNum} * #{criteria.amount})
+				where rn > (#{criteria.pageNum} - 1) * #{criteria.amount}
+			]]>
+	</select>
+	
+	<update id="updateNickname" parameterType="hashmap">
+		UPDATE member
+		SET mem_nickname = #{mem_nickname}
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<update id="updateProfileImagePath" parameterType="hashmap">
+		UPDATE member 
+		SET mem_profile_img = #{mem_profile_img} 
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<delete id="deleteInter" parameterType="shop.awesomejump.domain.ProInterestDTO">
+		DELETE FROM pro_interest
+		WHERE mem_no = #{mem_no}
+		AND product_no = #{product_no}
+	</delete>
+	
+	<insert id="registerCoupon" parameterType="shop.awesomejump.domain.MemberDTO">
+		INSERT INTO coupon_member(COUPON_MEMBER_NO, COUPON_NO, MEM_NO)
+	 	VALUES (coupon_member_seq.nextval, 1, #{mem_no})
+	</insert>
+	
+	<update id="updatePassword" parameterType="hashmap">
+		UPDATE member
+		SET mem_pw = #{mem_pw}
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<update id="updateEnabled">
+		UPDATE member
+		SET mem_enabled_yn = #{mem_enabled_yn}
+		WHERE mem_email = #{mem_email}
+	</update>
+	
+	<select id="interestTotalCount" resultType="int">
+		select count(*) from pro_interest where mem_no = #{mem_no}
+	</select>
+	
+	<select id="couponTotal" resultType="int">
+		<![CDATA[
+		select count(*) from coupon_member where mem_no = #{mem_no} and coupon_member_useyn = 'N' and coupon_member_expirydate > sysdate
+	]]>
+	</select>
+	
+	<select id="couponN" resultType="shop.awesomejump.domain.CouponMemDTO">
+		select c.coupon_name, m.order_info_uid, m.coupon_member_regdate, c.coupon_discount, m.coupon_member_expirydate
+		from coupon_member m,
+		    coupon c
+		where m.mem_no = #{mem_no}
+		    and m.coupon_no = c.coupon_no
+		    and m.coupon_member_useyn = 'N'
+		    ORDER by m.coupon_member_regdate desc
+	</select>
+	
+	<select id="couponY" resultType="shop.awesomejump.domain.CouponMemDTO">
+		select c.coupon_name, m.order_info_uid, m.coupon_member_regdate, c.coupon_discount, o.order_info_name, m.coupon_member_expirydate
+		from coupon_member m,
+		    coupon c,
+		    order_info o
+		where m.mem_no = #{mem_no}
+		    and m.coupon_no = c.coupon_no
+		    and m.coupon_member_useyn = 'Y'
+		    and m.order_info_uid = o.order_info_uid
+		    ORDER by m.coupon_member_regdate desc
+	</select>
+	
+	<select id="selPoint" resultType="int">
+		select mem_point
+		from member
+		where mem_no = #{mem_no}
+	</select>
+	
+	<select id="selPointList" resultType="shop.awesomejump.domain.PointListDTO">
+		select p.point_date, p.point_au, o.order_info_name, p.point_amount, o.order_info_price
+		from point p,
+		    order_info o
+		where p.mem_no = #{mem_no}
+		and p.order_info_uid = o.order_info_uid
+		ORDER BY p.point_date desc
+	</select>
+	
+	<select id="selAddPointList" resultType="shop.awesomejump.domain.PointListDTO">
+		 select point_date, point_au, order_info_name, point_amount, order_info_price
+		 from (select ROW_NUMBER() OVER(ORDER BY  p.point_date desc) as num, p.point_date, p.point_au, o.order_info_name, p.point_amount, o.order_info_price
+	              from point p,
+	                 order_info o
+	              where p.mem_no = #{mem_no}
+	              and p.order_info_uid = o.order_info_uid)
+		 where num BETWEEN #{startNum} and #{startNum}+#{cnt}
+	</select>
+	
+	<update id="updateForgotPassword">
+		UPDATE member
+		SET mem_pw = #{password}
+		WHERE mem_email = #{email}
+	</update>
+	
+	<select id="oldCoupon" resultType="Integer">
+	<![CDATA[
+		delete from coupon_member
+		where coupon_member_useyn = 'Y'
+		and coupon_member_expirydate+30 < sysdate
+	]]>
+	</select>
+	
+	<select id="todayOldCoupon" resultType="Integer">
+	<![CDATA[
+		DELETE from coupon_member
+		where coupon_member_useyn = 'N'
+		and coupon_member_expirydate < sysdate
+	]]>
+	</select>
+	
+	<select id="selProfile" resultType="shop.awesomejump.domain.MemberDTO">
+		select *
+		from member
+		where mem_nickname = #{user}
+	</select>
+</mapper>

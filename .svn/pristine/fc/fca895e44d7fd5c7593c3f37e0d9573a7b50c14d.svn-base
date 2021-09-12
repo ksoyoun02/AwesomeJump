@@ -1,0 +1,14 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<a href="#none"
+onclick="window.open('/websocket_test','new','scrollbars=yes,resizable=no,location=no,toolbar=no, width=400 height=480, left=100px, top=10px');return false">
+채팅방으로 이동</a>
+</body>
+</html>

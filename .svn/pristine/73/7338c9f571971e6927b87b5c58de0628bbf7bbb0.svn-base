@@ -1,0 +1,73 @@
+.divTable { 
+  display: table; 
+  width: 100%; 
+}
+
+.divTableHead {
+  display: table-header-group;
+}
+
+.divTableHead h4 {
+  font-weight: bolder;
+}
+
+.divTableBody {
+	display: table-row-group;
+}
+
+.divTableBody p {
+  line-height: 40px;
+}
+
+.divTableRow {
+	display: table-row;
+}
+
+.divTableCell {
+	display: table-cell;
+	border-bottom: 1px solid #ccc;
+	text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .divTableHead {
+    display: none;
+  }
+  
+  .divTableRow {
+    display: block;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    margin: 1rem 0;
+  }
+  
+  .divTableCell {
+    border: none;
+    display: inline;
+  }
+  
+  .divTableInline {
+    margin: 0 0 0 auto !important;
+    padding: 0 5px;
+    display: inline;
+  }
+  
+  .divTableCategory {
+    background-color: #eee;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .divTableTitle {
+    padding: 0 5px;
+    line-height: 50px !important;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  
+  .divTableCell:not(:first-of-type) {
+    text-align: left;
+  }
+}

@@ -1,0 +1,59 @@
+(function ($) {
+
+//상품옵션 받기
+
+//상품옵션 변경
+
+//상품옵션 보내기
+
+//유효성
+
+//상품 수량 변경
+	var proQty = $('.pro-qty');
+	    proQty.prepend('<span class="dec qtybtn">-</span>');
+	    proQty.append('<span class="inc qtybtn">+</span>');
+	    proQty.on('click', '.qtybtn', function () {
+	        var $button = $(this);
+	        var oldValue = $button.parent().find('input').val();
+	        if ($button.hasClass('inc')) {
+	            var newVal = parseFloat(oldValue) + 1;
+	        } else {
+	            // Don't allow decrementing below zero
+	            if (oldValue > 0) {
+	                var newVal = parseFloat(oldValue) - 1;
+	            } else {
+	                newVal = 0;
+	            }
+	        }
+	        $button.parent().find('input').val(newVal);
+	    });
+	    
+	    
+ })(jQuery);
+ 
+ 
+ 	$(".cartDetails").each(function() {
+	
+	var cartDetails = $(this);
+	var thisCartProductPrice = parseInt(cartDetails.children(".shoping__cart__price").data("cart"));
+
+	cartDetails.find(".dec.qtybtn").click(function() {
+	
+		var currentQty = parseInt($(this).siblings("input").val()) - 1;
+
+		if (currentQty >= 1) {
+			var price = thisCartProductPrice * currentQty;
+			cartDetails.children(".shoping__cart__total").text("￦" + $.number(price));
+		}
+		
+	});
+
+	cartDetails.find(".inc.qtybtn").click(function() {
+	
+		var currentQty = parseInt($(this).siblings("input").val()) + 1;
+		var price = thisCartProductPrice * currentQty;
+		
+		cartDetails.children(".shoping__cart__total").text("￦" + $.number(price));
+		
+	});
+});

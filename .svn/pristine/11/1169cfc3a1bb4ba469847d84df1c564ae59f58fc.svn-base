@@ -1,0 +1,44 @@
+.register_logo img{
+	width: 100px;
+	margin: 0 7px;
+	float: left;
+}
+
+.register_logo {
+  width: auto;
+  text-align: center;
+  margin: auto;
+}
+ @media screen and (max-width : 768px){
+ .logosize {
+ 	margin-left : 6%!important;
+ }
+ }
+.login_part_form h3 {
+	font-family: "NANUM";
+}
+	
+#login-submit{
+	height: 70px;
+    font-size: 30px;
+    font-family: 'NANUM';
+    font-weight: bold;
+    margin-top: 60px;
+}
+.abcRioButtonLightBlue {
+	height: 100px!important;
+	width: 100px!important;
+}
+.abcRioButtonContentWrapper{
+	background-image: url('/resources/google.png');
+	background-size: 100px;
+}
+.abcRioButtonIcon{
+	display: none;
+}
+.abcRioButtonContents{
+	display: none!important;
+}
+.abcRioButton {
+	box-shadow: none!important;
+}

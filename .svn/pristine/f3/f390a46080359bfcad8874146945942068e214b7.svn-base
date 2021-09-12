@@ -1,0 +1,36 @@
+@charset "UTF-8";
+
+ #email2 { 
+	border: none;
+   width: 380px;
+   border-bottom: 1px solid #dddddd;
+   padding-top: 6px;
+   padding-bottom: 6px;
+   padding-left: 12px;
+   padding-right: 12px;
+   height: 37.9px;
+   }
+   
+   input {
+   font-size: 18px;
+   }
+   
+   span {
+   font-size: 15px;
+   margin: auto;
+   }
+   
+   h3{
+   font-family: "NANUM";
+   
+   }
+   
+   textarea {
+	font-size: 17px;
+}
+
+	span{
+	font-family: "NANUM";
+	font-weight: bold;
+	
+}

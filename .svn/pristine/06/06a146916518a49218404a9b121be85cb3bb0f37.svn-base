@@ -1,0 +1,178 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <s:csrfMetaTags/>
+  
+  
+  <title>Product Page</title>
+  
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="/resources/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template-->
+  <link href="/resources/admin/css/sb-admin-2.min.css" rel="stylesheet">
+  
+  <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script defer src="/resources/admin/vendor/jquery/jquery.min.js"></script>
+  <script defer src="/resources/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="/resources/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Custom scripts -->
+  <script defer src="/resources/admin/js/sb-admin-2.min.js"></script>
+	<script type="text/javascript">
+	var CSRFheader = $("meta[name='_csrf_header']").attr('content');
+	var CSRFtoken = $("meta[name='_csrf']").attr('content');
+		$(function(){
+			$('#category_main').change(function() {
+				var select = $("#category_main option:selected").text();
+				/* alert(select); */
+				$.ajax({
+					type: 'post',
+					url: '/category_mid',
+					contentType: 'text/plain',
+					data: select,
+					beforeSend: (xhr) => xhr.setRequestHeader(CSRFheader,CSRFtoken),
+					success: function(data){
+						
+						var category = {};
+							for(var i = 0; i < data.length; i++){
+								category += '<option value="' + data[i].midCategory + '">' + data[i].category_mid + '</option>';
+							}
+						/* alert(category); */
+						$('#category_mid').html(category);
+					}
+				});
+			});
+			
+			$('#category_mid').change(function() {
+				var mainCategory = $("#category_main option:selected").text();
+				var midCategory = $("#category_mid option:selected").text();
+				$.ajax({
+					type: 'post',
+					url: '/category_sub',
+					contentType: 'text/plain',
+					data: {"mainCategory":mainCategory, "midCategory":subCategory},
+					beforeSend: (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+					success: function(data){
+						var category = {};
+							for(var i = 0; i < data.length; i++){
+								category += '<option value="' + data[i].subCategory + '">' + data[i].category_sub + '</option>';
+							}
+							$('#category_sub').html(category);
+					}
+				});
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		function formSubmit() {
+			var params = jQuery("#product").serialize();
+			jQuery.ajax({
+				url: '/insertProduct',
+				type: 'POST',
+				data: params,
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				dataType: 'html',
+				success: function(result){
+					if(result){
+						alert("등록 성공");
+						// 상품 등록 완료 시 화면 category로 이동
+						window.location.href="/admin/blank";
+					} else {
+						alert("등록 실패");
+						window.location.href="/admin/insertProduct";
+					}
+				}
+			});
+		}
+	</script>
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <jsp:include page="/WEB-INF/templates/admin/sidebar.jsp"/>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+
+        <jsp:include page="/WEB-INF/templates/admin/topbar.jsp"/>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">상품등록</h1>
+            	<form id="product" action="/insertProduct" method="post">
+  		<s:csrfInput/>
+	  	<div>상품명 : <input type="text" name="product_name"></div><br>
+	  	<div>상품가격 : <input type="text" name="product_price"></div><br>
+	  	<div>상품설명 : <input type="text" name="product_content"></div><br>
+	  	<div>상품재고 : <input type="text" name="product_stock"></div><br>
+	  	<div>상품재질 : <input type="text" name="product_texture"></div><br>
+	  	<div>포인트 : <input type="text" name="product_point"></div><br>
+	   	<div>상품 색상 : <input type="text" name="product_option_color"></div><br>
+	   	<div>상품 사이즈 : <input type="text" name="product_option_size"></div><br>
+	
+			 <select id="category_main" name="category_main" >
+			 	<option value="">선택</option>
+					<c:forEach items="${categoryList}" var="categoryList">
+				   <option value="{categoryList.selectCategoryBig}">${categoryList.category_main}</option>
+			  	</c:forEach>
+		 	 </select>
+		 	 <select id="category_mid" name="midCategory">
+		 	 	<option value="">선택</option>
+		 	 </select>
+		 	 <select id="category_sub" name="subCategory">
+		 	 	<option value="">선택</option>
+		 	 </select>
+		 	 
+		 	 
+		 	 
+		 	 <%-- <select id="category_min" name="midCategory" >
+					<c:forEach items="${categoryList}" var="categoryList">
+				    <option value="{categoryList.category_mid}">${categoryList.category_mid} </option>
+			  	</c:forEach>
+	  	 </select>
+		   <select id="category_sub" name="subCategory">
+					<c:forEach items="${categoryList}" var="categoryList">
+				   <option value="{categoryDTO.selectCategoryBig}">${categoryDTO.category_sub} </option>
+			  	</c:forEach>
+			 </select> --%>
+	  	
+	   </form>
+	  	<button type="button" onclick="formSubmit()">등록</button>
+	  	<button type="reset" >취소</button>
+          
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+
+
+      <jsp:include page="/WEB-INF/templates/admin/footer.jsp"/>
+
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top"> 
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <jsp:include page="/WEB-INF/templates/admin/logoutModal.jsp"/>
+
+</body>
+</html>

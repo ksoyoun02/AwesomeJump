@@ -1,0 +1,19 @@
+package shop.awesomejump.controller;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import shop.awesomejump.domain.MemberDTO;
+
+@Controller
+public class OrderController {
+	
+	
+//구매자 정보 , 배송지 정보, 주문상품 , 최종 결제금액(쿠폰/포인트) ,  결제방식선택
+	@RequestMapping("/order")
+	public String orderList(@AuthenticationPrincipal MemberDTO member) {
+		
+		return null;	
+	}
+}

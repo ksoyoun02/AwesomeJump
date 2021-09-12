@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop.awesomejump.mapper.AddressMapper">
+	
+	<insert id="insertAddress">
+		INSERT INTO address(address_no, mem_no, address_nickname, 
+							address_postcode, address_detail, 
+							address_receiver_name, address_receiver_phone) 
+		VALUES(address_seq.NEXTVAL, #{mem_no}, #{address_nickname}, 
+			   #{address_postcode}, #{address_detail}, 
+			   #{address_receiver_name}, #{address_receiver_phone})
+		<selectKey keyProperty="address_no" resultType="int" order="AFTER">
+			SELECT address_seq.CURRVAL FROM DUAL
+		</selectKey>	   
+	</insert>
+
+	<update id="updateAddress">
+		UPDATE address 
+		SET address_nickname = #{address_nickname}, address_postcode = #{address_postcode}, 
+			address_detail = #{address_detail}, address_receiver_name = #{address_receiver_name}, 
+			address_receiver_phone = #{address_receiver_phone} 
+		WHERE address_no = #{address_no}
+	</update>
+	
+	<delete id="deleteAddress">
+		DELETE FROM address
+		WHERE address_no = #{address_no}
+	</delete>
+
+	<select id="selectAddressList" resultType="shop.awesomejump.domain.AddressDTO">
+		SELECT * 
+		FROM address 
+		WHERE mem_no = #{mem_no}
+	</select>
+	
+
+	<select id="selAddress" resultType="shop.awesomejump.domain.AddressDTO">
+		SELECT *
+		FROM address
+		WHERE mem_no = #{mem_no}
+		AND address_no=#{address_no}
+	</select>
+
+
+	<select id="selectAddress" resultType="shop.awesomejump.domain.AddressDTO">
+		SELECT * 
+		FROM address 
+		WHERE address_no = #{address_no}
+	</select>
+	
+
+</mapper>

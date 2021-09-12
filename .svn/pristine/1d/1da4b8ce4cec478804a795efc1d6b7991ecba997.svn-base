@@ -1,0 +1,789 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <s:csrfMetaTags/>
+  <title>AwesomeJump - checkout</title>
+  
+  <link rel="icon" href="/resources/awesomejump/img/favicon.png">
+  <link rel="stylesheet" href="/resources/awesomejump/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/animate.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/nice-select.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/all.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/flaticon.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/themify-icons.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/magnific-popup.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/slick.css">
+  <link rel="stylesheet" href="/resources/awesomejump/css/price_rangs.css">
+  <!-- style CSS -->
+  <link rel="stylesheet" href="/resources/awesomejump/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery-1.12.1.min.js"></script>
+  <script defer src="/resources/awesomejump/js/popper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/bootstrap.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.magnific-popup.js"></script>
+  <script defer src="/resources/awesomejump/js/swiper.min.js"></script>
+  <script defer src="/resources/awesomejump/js/masonry.pkgd.js"></script>
+  <script defer src="/resources/awesomejump/js/owl.carousel.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.nice-select.min.js"></script>
+  <script defer src="/resources/awesomejump/js/slick.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.counterup.min.js"></script>
+  <script defer src="/resources/awesomejump/js/waypoints.min.js"></script>
+  <script defer src="/resources/awesomejump/js/contact.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.ajaxchimp.min.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.form.js"></script>
+  <script defer src="/resources/awesomejump/js/jquery.validate.min.js"></script>
+  <script defer src="/resources/awesomejump/js/mail-script.js"></script>
+  <script defer src="/resources/awesomejump/js/stellar.js"></script>
+  <script defer src="/resources/awesomejump/js/price_rangs.js"></script>
+  <!-- custom js -->
+  <script defer src="/resources/awesomejump/js/custom.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!-- Daum Postcode -->
+<script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- iamport.payment.js -->
+<script defer src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+
+  <script type="text/javascript">
+  
+//다음 주소찾기
+  	function sample6_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if(data.userSelectedType === 'R'){
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    document.getElementById("newAddress_extraAddress").value = extraAddr;
+                
+                } else {
+                    document.getElementById("newAddress_extraAddress").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('newAddress_postcode').value = data.zonecode;
+                document.getElementById("newAddress_address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("newAddress_detailAddress").focus();
+            }
+        }).open();
+    }
+
+  </script>
+  
+</head>
+
+<body>
+  
+  <jsp:include page="/WEB-INF/templates/awesomejump/header.jsp"/>
+
+  <!--================Home Banner Area =================-->
+  <!-- breadcrumb start-->
+  <section class="breadcrumb breadcrumb_bg">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="breadcrumb_iner">
+            <div class="breadcrumb_iner_item">
+              <h2>주문/결제</h2>
+              <p>
+                Home <span>-</span> 주문/결제
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- breadcrumb start-->
+
+  <!--================Checkout Area =================-->
+  <section class="checkout_area padding_top">
+    <div class="container">
+      <div class="billing_details">
+        <div class="row">
+          <div class="col-lg-8">
+          <h4><b>주문자</b></h4>
+          	<div class="row contact_form" action="#" method="post" novalidate="novalidate">	
+          		<div class="col-md-4 form-group  col-form-label">
+	                 <span class="placeholder">이름 : </span>
+	              </div>
+	          	  <div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="memName" name="memName" placeholder="이름을 입력해주세요." /> 
+	                <span class="placeholder"></span>
+	                
+	              </div>
+	              <div class="col-md-4 form-group  col-form-label">
+	                 <span class="placeholder">이메일 : </span>
+	              </div>
+	              <div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="checkout-cust_email" name="checkout-cust_email" value="${email.mem_email}" readonly />
+	                <input type="hidden" class="form-control" id="mem_no" name="mem_no" value="${mem_no}" readonly />
+	              </div>
+	              <div class="col-md-4 form-group  col-form-label">
+	                 <span class="placeholder">전화번호 : </span>
+	              </div>
+	               <div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="memNum" name="memNum" placeholder="번호를 입력해주세요.(-제외)" maxlength="11"/>
+	              </div>
+              </div>
+              
+              
+             <form class="row contact_form" action="#" method="post" novalidate="novalidate">
+             <div class="col-md-4 form-group  col-form-label">
+	                 <h4><b>배송지</b></h4>
+	        </div>
+          	<div class="col-md-8 form-group">
+				<button  class="btn btn-info" type="button"  data-toggle="modal" data-target="#myModal">
+					배송지 목록
+				</button>	
+	       </div>
+          	 	<div class="col-md-4 form-group  col-form-label">
+	                 <span class="placeholder">이름 : </span>
+	              </div>
+          	 	<div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="newAddress_receiver_name" name="address_receiver_name" placeholder="이름을 입력해주세요." /> 
+	              </div>
+	            <div class="col-md-4 form-group  col-form-label">
+	                 <span class="placeholder">연락처 : </span>
+	              </div>
+          	 	<div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="newAddress_receiver_num" name="newAddress_receiver_num" placeholder="번호를 입력해주세요.(-제외)" maxlength="11" />
+	              </div>
+	              <div class="col-md-4 form-group">
+                  <button class="btn btn-info" type="button" onclick="sample6_execDaumPostcode()" id="newAddress_postcodeBtn" value="우편번호 찾기">우편번호 찾기</button><br>
+                </div>
+	          		<div class="col-md-8 form-group">
+	                <input type="text" class="form-control" id="newAddress_postcode" name="addressList1"  placeholder="우편번호" /> 
+	              		
+	              </div>
+	              <div class="col-md-12 form-group">
+	                <input type="text" class="form-control" id="newAddress_address" name="addressList2"  placeholder="주소" />
+	              </div>
+	               <div class="col-md-6 form-group">
+	                <input type="text" class="form-control" id="newAddress_detailAddress" name="addressList3"  placeholder="상세주소" />
+	              </div>
+	               <div class="col-md-6 form-group">
+	                <input type="text" class="form-control" id="newAddress_extraAddress" name="addressList4"  placeholder="참고항목" />
+	              </div>
+	               <div class="col-md-12 form-group p_star">
+	                <select id="selbox" name="selbox">
+	                  <option value="1">배송시 요청사항을 선택해주세요</option>
+	                  <option value="2">부재시 문앞에 놓아주세요</option>
+	                  <option value="3">배송전에 미리 연락주세요</option>
+	                  <option value="4">부재시 경비실에 맡겨주세요</option>
+	                  <option value="5">부재시 전화주시거나 문자 남겨주세요</option>
+	                  <option value="direct">직접 입력</option>
+	                </select>
+	              </div>
+	              
+	               <div class="col-md-12 form-group p_star">
+	     	           <input type="text" class="form-control" id="selboxDirect" name="selboxDirect" value=""/>
+	               </div>
+              </form>
+              <!--직접입력 클릭시 input박스 나타남  -->
+          	<script type="text/javascript">
+          		$(function(){
+          			
+          			$("#selboxDirect").hide();
+          			
+          			$("#selbox").change(function(){
+          				
+          				if($("#selbox").val()=="direct"){
+          					$("#selboxDirect").show();
+          				}else{
+          					$("#selboxDirect").hide();
+          				}
+          			});
+          		});
+          	</script>
+           <h4><b>상품</b></h4>
+           <div class="checkout-list" data-checkout="${fn:length(checkout)}">
+           
+           <c:forEach items="${checkout}" var="checkout">
+	            <div class="border" data-checkout="${checkout.product_name}">
+	                  <div class="media">
+	                    <div class="d-flex">
+	                      <img src="/upload${checkout.product_image_path}" style="width: 150px; border-radius: 50px;" />
+	                      
+	                    </div>
+	                    <div>
+	                   		<%-- <p>${orderlist.product_no}</p> --%>
+	                      <p >이름 : ${checkout.product_name}</p>
+	                      <input type="hidden" id="productName" name="productName" value="${checkout.product_name}">
+	                      <p>재질 : ${checkout.product_texture}</p>
+	                      <div id="shoping__cart__price" data-cart="${checkout.product_price}" align="right">
+					        <fmt:formatNumber value="${checkout.product_price}" type="currency"/>
+					      </div>
+	                    </div>
+	                  </div>
+	                  <div class="border">
+		                  <div class="media">
+		                  	<p>${checkout.product_option_size} | ${checkout.product_option_color} </p>
+		                  </div>  
+		                   ${checkout.cart_quantity}개
+		                  <div class="media-body" align="right">
+		                  <h5>
+		                  	<fmt:formatNumber value="${checkout.cart_quantity * checkout.product_price}" type="currency"/>
+		                  </h5>
+		                  </div>
+	                  </div>
+	            	   <input type="hidden" value="${checkout.cart_no}" name="cart_no">
+	            	   <input type="hidden" id="product_point" value="${checkout.product_point}" name="product_point">
+	          	</div>
+           </c:forEach>
+           </div>
+           	<br>
+           	<form class="row contact_form" action="#" method="post" novalidate="novalidate">	
+	           	<div class="col-md-10 form-group  col-form-label">
+		                 <h4><b>쿠폰</b></h4>
+		        </div>
+		        
+	          	
+	            
+	            <div class="col-md-4 " >
+	            	<input type="text" class="form-control" id="cp" value="0" readonly/>  	
+	            </div>
+	           <div class="col-md-8 form-group">
+					<button  class="btn btn-info" type="button"  data-toggle="modal" data-target="#couponModal">
+						쿠폰 목록
+					</button>	
+		       </div>
+            </form>
+            <hr>
+          
+            <h4>포인트</h4>
+            <hr>
+           <%--  <div class="col-md-4 " >
+            	<input type="text" class="form-control" id="point" value="포인트를 사용하시겠습니까"/>  	
+            </div>
+            <div class="col-md-4 " >
+            	<input type="hidden" id="userPoint" value="${point}">
+            	<button class="btn btn-info" type="button" onclick="total();">전액사용</button>
+            </div>  
+            	<span>사용가능 포인트 : ${point} Point</span> --%>
+            	 <div id="pointInfo" style="margin-top:20px;">
+			    <table class="table table-bordered" >			
+                <!-- 적립금 -->
+                	<tbody>
+               		 <tr>
+						<th scope="row" width="150px">사용가능 적립금</th>
+               			 <td style="padding-left:10px;">
+               				 <p> 
+	        				    <input name="opointUse" id="opointUse" type="text" class="text-right" value="0"
+	          				      size="10" oninput="chkPoint(this,'${point}')" >
+	          				       원 (사용가능 적립금 :<span style="color:red;font-weight:bold">${point}  원</span> 
+	         				    <input type="checkbox" id="chkAll" onclick="useAllPoint('${point}')" >전부사용하기)
+	      					    <input type="button" class="btn btn-info" value="사용하기" 
+	      				          onclick="calcToPrice(opointUse.value,ototalPrice.value)" >				
+           				     </p>                 
+							  <p>
+								총구매가격이 최소 100원 이상일 때 결제가 가능합니다.
+           			            최대 사용금액은 제한이 없습니다.1회 구매시 적립금 최대 사용금액은 ${point} 원 입니다.<br>
+         			            적립금으로만 결제할 경우, 결제금액이 0으로 보여지는 것은 정상이며
+         			            <b>[결제하기]</b> 버튼을 누르면 주문이 완료됩니다.<br>
+        			            적립금 사용 시 배송비는 적립금으로 사용 할 수 없습니다.
+       				         </p>
+						   </td>
+      		           </tr>
+        	       </tbody>
+            	</table>            
+			</div>
+            <hr>	
+          	  <h4>결제 수단</h4>
+            <hr>
+            <input type="radio" id="opayWay" name="opayWay"  value="100" checked><span>카드</span>
+           <%--  <input type="radio" id="opayWay" name="opayWay" value="200" ><span>카카오페이</span> --%>
+       <script type="text/javascript">
+			/* function total() {
+				alert("포인트 전액 사용하시겠습니까?");
+			    $("#point").val($("#userPoint").val());
+			} */
+			
+			function chkPoint(input, mileage){
+				var tmpPoint = parseInt(input.value);
+				if(tmpPoint>mileage){
+					alert("사용 가능한 적립금액 보다 많습니다.");
+					input.value="0";
+					return;
+				}
+			}//--------------------------
+			
+			function useAllPoint(mileage){
+				if($('#chkAll').is(':checked')){
+					$('#opointUse').val(mileage);
+				} else{
+					$('#opointUse').val(0);
+					$('#opointUse').select();
+					$('#ototalPrice').val('${totalPrice}');
+					$('#usePoint').html("0");
+					var str="${totalPrice}";
+					$('#total').text(addCommaNum(parseInt(str)));
+				} 
+				
+			}
+			
+		
+			
+			function addCommaNum(x){
+				return x.toLocaleString();
+			}
+			
+			function calcToPrice(usePoint, totalBuy){
+				//alert(usePoint+"/"+totalBuy);
+				var price = totalBuy-usePoint; //총구매 가격에서 사용 포인트 차감
+				if(price<100){
+					alert('총구매가격이 최소 100원 이상일 때 결제가 가능합니다. \n사용포인트를 다시 입력하세요')
+					$('#opointUse').select();
+					return;
+				}
+				$('#ototalPrice').val(price);
+				$('#usePoint').html("-"+usePoint);
+				var str=addCommaNum(price);
+				$('#total').html(str+"원");
+				
+			}//---------------------------
+			
+		</script>
+		
+          </div>
+          <div class="col-lg-4">
+            <div class="order_box">
+              <h2>결제 금액</h2>
+              <ul class="list">
+                <li><a href="#">상품금액 : <span><fmt:formatNumber value="${totalPrice}" pattern="#,###,###"/></span>
+                </a></li>
+                <li><a href="#">배송비 : <span>+0</span>
+                </a></li>
+                <li><a id="">쿠폰사용 : <span id="useCoupon">-0</span>
+                </a></li>
+            
+                <li><a id="">포인트사용 : <span id="usePoint">-0 </span></a></li>      
+              </ul>
+              <ul class="list list_2">
+                <li>
+                <input type="hidden" name="ototalPrice" id="ototalPrice" value="${totalPrice}">
+                <a id="">최종금액 : <span id="total"><fmt:formatNumber value="${totalPrice}" pattern="#,###,###"/></span>
+                </a></li>
+              </ul>
+ 
+              <div class="payment_item">
+             
+              <a class="btn_3 place-order" onclick="requestPay();" style="cursor:pointer">결제하기</a>
+            </div>
+            	<a style="float: right;"><span><fmt:formatNumber value="${totalPoint}" /></span>Point 적립예정</a>
+          </div>
+        </div>
+      </div>
+    </div>
+	</div>
+  </section>
+  <!--================End Checkout Area =================-->
+<script type="text/javascript">
+	
+
+	function requestPay(){
+		
+		
+		if ($("#memName").val() == "") {
+			alert("이름을 입력해주세요");
+			$("#memName").focus();
+			return false;
+			
+		}  else if ($("#memNum").val() == "") {
+			alert("번호를 입력해주세요");
+			$("#memNum").focus();
+			return false;
+		}  else if ($("#newAddress_receiver_name").val() == "") {
+			alert("이름을 입력해주세요");
+			$("#newAddress_receiver_name").focus();
+			return false;
+		}  else if ($("#newAddress_receiver_num").val() == "") {
+			alert("번호를 입력해주세요");
+			$("#newAddress_receiver_num").focus();
+			return false;
+		}  else if ($("#newAddress_postcode").val() == "") {
+			alert("우편번호를 입력해주세요");
+			$("#newAddress_postcode").focus();
+			return false;
+		}  else if ($("#newAddress_address").val() == "") {
+			alert("주소를 입력해주세요");
+			$("#newAddress_address").focus();
+			return false;
+		} /*  else if ($("#newAddress_detailAddress").val() == "") {
+			alert("상세주소를 입력해주세요");
+			$("#newAddress_detailAddress").focus();
+			return false;
+		}  */
+		
+		
+
+		document.cookie = "safeCookie1=foo; SameSite=Lax";
+		document.cookie = "safeCookie2=foo";
+		document.cookie = "crossCookie=bar; SameSite=None; Secure";
+	
+		 var CSRFheader = $("meta[name='_csrf_header']").attr('content');
+	        var CSRFtoken = $("meta[name='_csrf']").attr('content');
+	     
+	           if(CSRFtoken && CSRFheader) {
+	               $(document).ajaxSend(function(event, xhr, options) {
+	                   xhr.setRequestHeader(CSRFheader, CSRFtoken);
+	               });
+	           } 
+	           
+		var checkoutLength = $(".checkout-list").data("checkout");
+		var checkoutName = checkoutLength == 1 
+				? $(".checkout-list").children(":first").data("checkout")
+				: $(".checkout-list").children(":first").data("checkout") + " 외 " + (checkoutLength - 1);
+		
+			 	var cartArray = [];
+				$("input[name='cart_no']").each(function() {
+					var cartNo = $(this).val();
+					cartArray.push(cartNo);
+				});
+				
+				var pointArray = [];
+				$("input[name='product_point']").each(function(){
+					var product_point = $(this).val();
+					pointArray.push(product_point);
+				});
+				
+		/* var couponPoint ={
+						useCp : $("#cp").val(),
+						usePt : $('#opointUse').val(),
+						insertPoint : ${totalPoint}
+		}; */
+		
+		
+		/*사용한 포인트  */
+		var usePoint =$('#opointUse').val();
+		//alert(usePoint);
+		/*적립된 포인트  */
+		var insertPoint = ${totalPoint};
+		//alert(insertPoint);
+		/*기존 포인트  */
+		var point = ${point}-$('#opointUse').val()+${totalPoint};
+		//alert(point);
+		
+		var buyerEmail = $("#checkout-cust_email").val();
+		var buyerName = $("#newAddress_receiver_name").val();
+		var buyerTel = $("#newAddress_receiver_num").val();
+		var buyerPostcode = $("input[name='addressList1']").val();
+		var buyerAddr     = $("input[name='addressList2']").val() + "，"
+		    	          + $("input[name='addressList3']").val() + ($("input[name='addressList4']").val().length > 0 ? "，" : "")
+					      + $("input[name='addressList4']").val();
+		//var productName =$("#productName").val();
+		var productAmount = $("#ototalPrice").val();
+		
+		var IMP = window.IMP; // 생략해도 괜찮습니다.
+		IMP.init('imp09474136');
+		
+		
+		 if($(":input:radio[name=opayWay]:checked").val() == 100){
+			//alert("카드계산");
+			
+			// IMP.request_pay(param, callback) 호출
+			  IMP.request_pay({ // param
+			    pg: "html5_inicis",
+			    pay_method: "card",
+			    merchant_uid: 'order_' + new Date().getTime(),
+			    buyer_name: buyerName,
+			    buyer_postcode: buyerPostcode,
+			    buyer_addr: buyerAddr,
+			    buyer_tel: buyerTel,
+			    buyer_email: buyerEmail,
+			    name: checkoutName,
+			    amount: productAmount
+
+			  }, function (rsp) { // callback
+			    if (rsp.success) {
+			        // 결제 성공 시 로직
+			       // alert("결제 성공");
+			        /*사용한 쿠폰  */		
+					 var updateCp={coupon_no: $("#newcoupon").val()};
+					/*기존포인트-사용한포인트+적립포인트  */
+					 var updatePt={mem_point: point} 
+					
+			        var orderInfo = {
+			    			order_info_uid: rsp.merchant_uid,
+			    			mem_no: $("#mem_no").val(),
+			    			order_info_imp_uid: rsp.imp_uid,
+			    			order_info_name: checkoutName,
+			    			order_info_date: new Date().getTime(),
+			    			order_info_price: productAmount,
+			    			order_info_approval: rsp.apply_num,
+			    			order_info_mem_name: $("#memName").val(),
+			    			order_info_mem_phone: $("#memNum").val(),
+			    			order_info_receive_name: buyerName,
+			    			order_info_phone: buyerTel,
+			    			order_info_postcode: buyerPostcode,
+			    			order_info_address: buyerAddr,
+			    			order_info_request: ($("#selboxDirect").val() == ''? $("#selbox option:selected").val(): $("#selboxDirect").val())
+			    		};
+
+			        $.ajax({
+						url: "/checkout/complete",
+						type: "POST",
+						async: false,
+						traditional: true,
+						data: JSON.stringify({
+							cart: JSON.stringify(cartArray),
+							order: JSON.stringify(orderInfo),
+							updateCp: JSON.stringify(updateCp),
+							updatePt:  JSON.stringify(updatePt),
+							point: JSON.stringify(pointArray)
+						}),	
+						contentType: "application/json; charset=UTF-8",
+						beforeSend: (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+						success:() => window.location.assign("/checkout/complete?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + rsp.merchant_uid),
+						fail: () => {
+							// 서버 장애시 환불 로직 작성 
+							$.ajax({
+							url: "/checkout/checkoutFail/" + rsp.imp_uid,
+							type: "POST",
+							beforeSend : (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+							success: () => alert("결제에 실패하였습니다. (서버 장애)")
+							});
+						}
+					});
+			    } else {
+
+			        // 결제 실패 시 로직
+			        alert("결제 실패");
+			        $(".error_msg").text(rsp.error_msg);
+					$('#checkoutFailModal').modal();
+			    }
+			  });
+				
+			
+		}/* else if($(":input:radio[name=opayWay]:checked").val() == 200){ 
+			alert("카카오페이");
+		// IMP.request_pay(param, callback) 호출
+		  IMP.request_pay({ // param
+		    pg: "kakaopay",
+		    pay_method: "kakaopay",
+		    merchant_uid: 'order_' + new Date().getTime(),
+		    buyer_name: buyerName,
+		    buyer_postcode: buyerPostcode,
+		    buyer_addr: buyerAddr,
+		    buyer_tel: buyerTel,
+		    buyer_email: buyerEmail,
+		    name: checkoutName,
+		    amount: productAmount
+
+		  }, function (rsp) { // callback
+		    if (rsp.success) {
+		        // 결제 성공 시 로직
+		        alert("결제 성공");
+		        
+		        var orderInfo = {
+		    			order_info_uid: rsp.merchant_uid,
+		    			mem_no: $("#mem_no").val(),
+		    			order_info_imp_uid: rsp.imp_uid,
+		    			order_info_name: checkoutName,
+		    			order_info_date: new Date().getTime(),
+		    			order_info_price: productAmount,
+		    			order_info_approval: rsp.apply_num,
+		    			order_info_mem_name: $("#memName").val(),
+		    			order_info_mem_phone: $("#memNum").val(),
+		    			order_info_receive_name: buyerName,
+		    			order_info_phone: buyerTel,
+		    			order_info_postcode: buyerPostcode,
+		    			order_info_address: buyerAddr,
+		    			order_info_request: $("#selboxDirect").val()
+		    		};
+
+		        $.ajax({
+					url: "/checkout/complete",
+					type: "POST",
+					async: false,
+					traditional: true,
+					data: JSON.stringify({
+						cart: JSON.stringify(cartArray),
+						order: JSON.stringify(orderInfo)
+						
+					}),	
+					contentType: "application/json; charset=UTF-8",
+					beforeSend: (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+					success:() => window.location.assign("/checkout/complete?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + rsp.merchant_uid),
+					fail: () => {
+						// 서버 장애시 환불 로직 작성 
+						$.ajax({
+						url: "/checkout/checkoutFail/" + rsp.imp_uid,
+						type: "POST",
+						beforeSend : (xhr) => xhr.setRequestHeader(CSRFheader, CSRFtoken),
+						success: () => alert("결제에 실패하였습니다. (서버 장애)")
+						});
+					}
+				});
+		    } else {
+
+		        // 결제 실패 시 로직
+		        alert("결제 실패");
+		        $(".error_msg").text(rsp.error_msg);
+				$('#checkoutFailModal').modal();
+		  });
+		 }  */
+	
+		
+	}
+</script>
+	     <!--배송지 모달창  -->
+	    <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog"> <!-- fade는 투명 효과 -->
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">배송지 목록</h4>
+        <button type="button" class="close" data-dismiss="modal">x</button>
+      </div>
+      <div class="modal-body" style="overflow:scroll;  height:500px;">
+      
+        <c:forEach var="address" items="${addressList}" varStatus="var">
+          <div class="card m-2" >
+            <div class="card-header">
+              <strong>${address.address_nickname}</strong>
+            </div>
+            <div class="card-body">
+              <div class="mb-2" >
+              	<strong>주문자명 : </strong>${address.address_receiver_name}</div>
+              <div class="mb-2">
+              	<strong>주소 : </strong>${address.address_detail}</div>
+              <div class="mb-2" >
+              	<strong>연락처 : </strong>${address.address_receiver_phone}</div>
+              	
+              	<input type="hidden" id="modal_receiver_name${var.count}" value="${address.address_receiver_name}">
+              	<input type="hidden" id="modal_receiver_addr${var.count}" value="${address.address_detail}">
+              	<input type="hidden" id="modal_receiver_num${var.count}" value="${address.address_receiver_phone}">
+              	<input type="hidden" id="modal_address_postcode${var.count}" value="${address.address_postcode}">
+              <a  class="btn btn-danger float-right ml-2" id="newAddressBtn" onclick="ch1(${var.count});">선택</a> 
+             
+            </div>
+          </div>
+        </c:forEach>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- 주소모달창에있는 주소 불러오기  -->
+<script type="text/javascript">
+function ch1(num) {
+	//alert(num);
+    $("#newAddress_receiver_name").val($("#modal_receiver_name"+num).val());
+    $("#newAddress_postcode").val($("#modal_address_postcode"+num).val());
+    var address = $("#modal_receiver_addr"+num).val();
+    var addressList = address.split("，");
+    
+    $("#newAddress_address").val(addressList[0]);
+    $("#newAddress_detailAddress").val(addressList[1]);
+    $("#newAddress_extraAddress").val(addressList[2]);
+    
+    $("#newAddress_receiver_num").val($("#modal_receiver_num"+num).val());
+    $("#myModal").modal("hide");
+}
+</script>
+			<!--쿠폰 모달창  -->
+<div id="couponModal" class="modal fade" role="dialog"> <!-- fade는 투명 효과 -->
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">쿠폰 목록</h4>
+        <button type="button" class="close" data-dismiss="modal">x</button>
+      </div>
+      <div class="modal-body" style="overflow:scroll;  height:500px;">
+      
+        <c:forEach var="coupon" items="${coupon}" varStatus="var">
+          <div class="card m-2" >
+            <div class="card-body">
+              <div class="mb-2">
+              <input type="hidden" id="newcoupon${var.count}" value="${coupon.coupon_no}">
+              <input type="hidden" id="newcp${var.count}" value="${coupon.coupon_name}(${coupon.coupon_discount}원 할인)">
+              	<h4>${coupon.coupon_name}</h4></div>
+              <div class="mb-2">사용 기한 : ${coupon.coupon_member_expirydate}</div>
+              <a  class="btn btn-danger float-right ml-2" id="newAddressBtn" onclick="ch2(${coupon.coupon_discount}, '${totalPrice}', ${var.count});">선택</a> 
+            </div>
+          </div>
+        </c:forEach>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+	
+<script type="text/javascript">
+function ch2(cp,price,num) {
+	//alert(cp+"/"+price+"/"+num);
+    
+    var cPrice = price-cp;
+    if(cPrice<0){
+		alert('총구매가격보다 큽니다.');
+		
+		return;
+	}else{
+   	$("#cp").val($("#newcp"+num).val());
+	
+    $('#useCoupon').html("-"+cp);
+    
+    $('#ototalPrice').val(cPrice);
+    
+    var str1=addCommaNum(cPrice);
+	$('#total').html(str1+"원");
+	
+    $("#couponModal").modal("hide");
+	}
+    
+}
+
+
+</script>	
+	
+  </div>
+</div>
+  <jsp:include page="/WEB-INF/templates/awesomejump/footer.jsp"/>
+
+</body>
+</html>
